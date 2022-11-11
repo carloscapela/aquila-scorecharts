@@ -1,5 +1,50 @@
 <template>
-<div>
+<div v-if="main">
+    <slot></slot>
+    <div>
+        <div class="input-group mb-2">
+            <button
+                class="btn btn-outline-secondary"
+                type="button"
+                :class="{ disabled: !titleX }"
+                @click="() => {
+                    x = null
+                    titleX = ''
+                }"
+                title="Clean X"
+            >
+                <i class="bi bi-trash"></i>
+            </button>
+            <input type="text" class="form-control border-secondary" :value="titleX || 'Score X'" disabled>
+        </div>
+
+        <div class="input-group mb-2">
+            <button
+                class="btn btn-outline-warning"
+                type="button"
+                :class="{ disabled: !titleY }"
+                @click="() => {
+                    y = null
+                    titleY = ''
+                }"
+                title="Clean Y"
+            >
+                <i class="bi bi-trash"></i>
+            </button>
+            <input type="text" class="form-control border-warning" :value="titleY || 'Score Y'" disabled>
+        </div>
+    </div>
+    <!-- <div class="list-group" v-if="main"> -->
+    <IndicatorComponent
+        v-for="(label, scoreKey) in scores"
+        :title="label"
+        :options="main[`_${scoreKey}`]"
+        :callback="() => this.handleClick(scoreKey)"
+        :active="key===scoreKey"
+    />
+    <!-- </div> -->
+</div>
+<!-- <div>
     <slot></slot>
     <div>
         <div class="input-group mb-2">
@@ -168,16 +213,21 @@
             </div>
         </button>
     </div>
-</div>
+</div> -->
 </template>
 
 <script>
-import {labels} from '../../helpers/util'
+import h from '../../helpers'
+import IndicatorComponent from '../Indicator.vue'
+// import {labels} from '../../helpers/util'
 export default {
     props: {
         main: Object,
         callbackX: Function,
         callbackY: Function,
+    },
+    components: {
+        IndicatorComponent
     },
     data() {
         return {
@@ -190,19 +240,19 @@ export default {
     methods: {
         handleClick(field, key){
             if (!this.x && !this.y) {
-                this.x = key
+                this.x = field
                 this.titleX = labels(field)
                 this.callbackX(field)
             } else if (this.x && !this.y) {
-                this.y = key
+                this.y = field
                 this.titleY = labels(field)
                 this.callbackY(field)
             } else if (this.x && this.y) {
-                this.y = key
+                this.y = field
                 this.titleY = labels(field)
                 this.callbackY(field)
             } else {
-                this.x = key
+                this.x = field
                 this.titleX = labels(field)
                 this.callbackX(field)
             }
@@ -215,5 +265,10 @@ export default {
             return ObjectStyle
         },
     },
+    setup() {
+        return {
+            scores: h.scores()
+        }
+    }
 }
 </script>

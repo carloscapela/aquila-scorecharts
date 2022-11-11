@@ -174,7 +174,8 @@
 </template>
 
 <script>
-import {labels} from '../helpers/util'
+import h from '../helpers'
+
 export default {
     props: {
         main: Object,
@@ -193,19 +194,19 @@ export default {
         handleClick(field, key){
             if (!this.x && !this.y) {
                 this.x = key
-                this.titleX = labels(field)
+                this.titleX = h.scores(field)
                 this.callbackX(field)
             } else if (this.x && !this.y) {
                 this.y = key
-                this.titleY = labels(field)
+                this.titleY = h.scores(field)
                 this.callbackY(field)
             } else if (this.x && this.y) {
                 this.y = key
-                this.titleY = labels(field)
+                this.titleY = h.scores(field)
                 this.callbackY(field)
             } else {
                 this.x = key
-                this.titleX = labels(field)
+                this.titleX = h.scores(field)
                 this.callbackX(field)
             }
         },

@@ -35,7 +35,7 @@ export default {
             return {
                 title: { text: is_avg ? 'Time' : 'Percentage' },
                 min: 0,
-                max: is_avg ? this.main[`_${this.field}`].max : 100,
+                max: this.main[`_${this.field}`].max,
             }
         },
         // convert date & time
@@ -46,7 +46,7 @@ export default {
         },
         handleInit() {
             this.series = [{
-                name: h.labels(this.field),
+                name: h.scores(this.field),
                 data: this.main[this.field],
             }]
 
@@ -95,7 +95,7 @@ export default {
                     offsetX: -5,
                 },
                 title: {
-                    text: `${this.main.name} - ${h.labels(this.field)}`,
+                    text: `${this.main.name} - ${h.scores(this.field)}`,
                     align: 'left'
                 },
             }

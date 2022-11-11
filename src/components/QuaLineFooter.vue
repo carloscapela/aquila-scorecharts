@@ -17,8 +17,7 @@
 
 <script>
 import moment from 'moment'
-import {qualitys} from '../helpers/util'
-import {avg, min, max} from '../helpers/numbers'
+import h from '../helpers'
 
 export default {
     props: {
@@ -39,7 +38,7 @@ export default {
         }
     },
     created() {
-        this.qualities = qualitys()
+        this.qualities = h.qualitys()
         this.formatDate()
         this.handleInit()
         this.handleOptions()
@@ -96,11 +95,11 @@ export default {
             const media = []
             // if no value is selected
             if (!this.inputs.length) {
-                for (let k in this.qualities) media.push( Number(avg(this.main[k])) )
-                let valueMin = min(media)
-                let valueMax = max(media)
+                for (let k in this.qualities) media.push( Number(h.avg(this.main[k])) )
+                let valueMin = h.min(media)
+                let valueMax = h.max(media)
                 for (let k in this.qualities) {
-                    let value = Number(avg(this.main[k]))
+                    let value = Number(h.avg(this.main[k]))
                     if (value === valueMin) {
                         dt.push({ name: this.qualities[k], data: this.main[k] })
                         this.inputs.push({ id: k, label: this.qualities[k] })

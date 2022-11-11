@@ -43,7 +43,7 @@ export default {
         const data = {
             general_score: 'General Score',
             qual_score: 'Quality Score',
-            avg_exam_duration: 'AVG Time (min)',
+            avg_exam_duration: 'AVG Time (m)',
             prod_score: 'Ocupation',
             safety_score: 'Radiation Overdose',
             nps_score: 'NPS',
@@ -56,7 +56,7 @@ export default {
         const data = {
             general_score: 'General Score',
             qual_score: 'Quality Score',
-            avg_exam_duration: 'AVG Time (min)',
+            avg_exam_duration: 'AVG Time (m)',
             prod_score: 'Ocupation',
             safety_score: 'Radiation Overdose',
             nps_score: 'NPS',

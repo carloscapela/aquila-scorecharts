@@ -17,8 +17,7 @@
 
 <script>
 import moment from 'moment'
-import {labels} from '../helpers/util'
-import {max} from '../helpers/numbers'
+import h from '../helpers'
 
 export default {
     props: {
@@ -54,7 +53,7 @@ export default {
             return {
                 title: { text: is_avg ? 'Time' : 'Percentage' },
                 min: 0,
-                max: is_avg ? this.main[`_${this.field}`].max : 100,
+                max: this.main[`_${this.field}`].max,
             }
         },
         // convert date & time
@@ -65,7 +64,7 @@ export default {
         },
         handleInit() {
             this.series = [{
-                name: labels(this.field),
+                name: h.scores(this.field),
                 data: this.main[this.field],
             }]
 
@@ -121,7 +120,7 @@ export default {
                     offsetX: -5,
                 },
                 title: {
-                    text: `${this.main.name} - ${labels(this.field)}`,
+                    text: `${this.main.name} - ${h.scores(this.field)}`,
                     align: 'left'
                 },
             }
@@ -188,7 +187,7 @@ export default {
                 }
             })
             const dateStr = moment(dateSelected).format('MMM DD YYYY')
-            this.barDurationMax = max(durations)
+            this.barDurationMax = h.max(durations)
             // this.barColors = this.setBarColors(durations)
             // console.log(this.barColors)
             this.barCategories = timeCategories

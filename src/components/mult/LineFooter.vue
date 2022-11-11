@@ -6,19 +6,12 @@
             :options="chartOptions"
             :series="series">
         </apexchart>
-        <!-- <apexchart
-            v-if="enableBar"
-            type="bar"
-            height="250"
-            :options="barOptions"
-            :series="barSeries">
-        </apexchart> -->
     </div>
 </template>
 
 <script>
 import moment from 'moment'
-import {labels} from '../../helpers/util'
+import h from '../../helpers'
 
 export default {
     props: {
@@ -39,14 +32,6 @@ export default {
         this.handleInit()
     },
     methods: {
-        // getYaxis() {
-        //     const is_avg = this.field === 'avg_exam_duration'
-        //     return {
-        //         title: { text: is_avg ? 'Time' : 'Percentage' },
-        //         min: 0,
-        //         max: is_avg ? this.main[`_${this.field}`].max : 100,
-        //     }
-        // },
         // convert date & time
         formatDate() {
             const dt = []
@@ -57,13 +42,13 @@ export default {
             const data = []
             if (this.fieldX) {
                 data.push({
-                    name: labels(this.fieldX),
+                    name: h.scores(this.fieldX),
                     data: this.main[this.fieldX],
                 })
             }
             if (this.fieldY) {
                 data.push({
-                    name: labels(this.fieldY),
+                    name: h.scores(this.fieldY),
                     data: this.main[this.fieldY],
                 })
             }
@@ -88,9 +73,6 @@ export default {
                         blur: 10,
                         opacity: 0.2
                     },
-                    // toolbar: {
-                    //     show: true
-                    // },
                 },
                 colors: ['#828282', '#ffc700'],
                 grid: {
@@ -105,7 +87,6 @@ export default {
                     title: { text: 'Dates' },
                     type: 'datetime',
                 },
-                // yaxis: this.getYaxis(),
                 yaxis: {
                     title: { text: 'Percentage' },
                     min: 0,
@@ -122,7 +103,6 @@ export default {
                     offsetX: -5,
                 },
                 title: {
-                    // text: `${this.main.name} - ${labels(this.field)}`,
                     text: `${this.main.name}`,
                     align: 'left'
                 },
