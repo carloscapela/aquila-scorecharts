@@ -22,20 +22,16 @@
     <template #sidebar>
       <SidebarComponent
         :main="itemSelect"
+        :field="field"
         :callback="(v) => {
-          this.setClickData(v)
+          this.field = v
           this.initMap()
         }">
-        <!--
-          options
-          callback
-          -->
         <SelectComponent
           :options="customer.units"
           :main="customer"
           :callback="(v) => {
             this.itemSelect = v
-            this.setClickData(this.field)
             this.initMap()
           }"
           :selected="itemSelect"
@@ -72,9 +68,6 @@ export default {
       customer: {},
       // Sidebar
       itemSelect: {}, // *
-      // LineFooter
-      // Obrigatório para o LineBar
-      series: [],
       // MAPS
       mapOptions: {},
       field: '',
@@ -92,7 +85,7 @@ export default {
       this.itemSelect = this.customer.units.find(item => item.name == this.$route.params.unitName)
     }
     this.initMap()
-    this.setSidebar()
+    this.field = h.getKeyScore(this.itemSelect)
     this.setUnitMap()
   },
 
@@ -101,13 +94,6 @@ export default {
       this.customer = (new Customer(start, end)).findBy(this.$route.params.customer)
       this.itemSelect = this.customer
       this.initMap()
-      this.setSidebar()
-    },
-
-    // Obrigatorio para o Sidebar
-    // Problema
-    setSidebar () {
-      this.setClickData('general_score')
       this.setUnitMap()
     },
 
@@ -130,7 +116,6 @@ export default {
     // Obrigatório para o LineBar
     setClickData (field) {
       this.field = field
-      this.series = this.itemSelect[field]
     },
 
     getDataRadius(valueMax) {

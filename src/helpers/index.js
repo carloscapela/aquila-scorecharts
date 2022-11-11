@@ -4,6 +4,8 @@ const API_KEY = 'AIzaSyBP4mlIFGg5zQdgvUe0uxQ1bHCSt8847uE'
 const VERSION = 'weekly'
 
 export default {
+
+    // returns an object with all qualifiers
     qualitys (key = '') {
          data = {
             // muscle_cc_detected: 'Muscle Detected',
@@ -25,6 +27,7 @@ export default {
         return key ? data[key] : data
     },
 
+    // returns a scoring key
     getKeyScore (main) {
         const data = this.labels()
 
@@ -35,6 +38,7 @@ export default {
         return 'qual_score'
     },
 
+    // returns an object with all scores and their descriptions
     labels (score_name = '') {
         const data = {
             general_score: 'General Score',
@@ -47,7 +51,21 @@ export default {
 
         return score_name ? data[score_name] : data
     },
-    // Maps
+
+    scores (score_name = '') {
+        const data = {
+            general_score: 'General Score',
+            qual_score: 'Quality Score',
+            avg_exam_duration: 'AVG Time (min)',
+            prod_score: 'Ocupation',
+            safety_score: 'Radiation Overdose',
+            nps_score: 'NPS',
+        }
+
+        return score_name ? data[score_name] : data
+    },
+
+    // load Maps
     load () {
         return new Loader({
             apiKey: API_KEY,

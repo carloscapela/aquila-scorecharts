@@ -60,6 +60,7 @@
     <template #sidebar>
       <SidebarComponent
         :main="itemSelect"
+        :field="field"
         :callback="(v) => {
           this.field = v
         }">
@@ -104,10 +105,6 @@
       return {
         unit: {},
         devices: [],
-        // LineFooter
-        // Obrigatório para o LineBar
-        series: [],
-        // Sidebar
         itemSelect: {},
         field: '',
       }
