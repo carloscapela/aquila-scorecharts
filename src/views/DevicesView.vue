@@ -5,7 +5,7 @@
         :customer="itemSelect.customer_name"
         :unit="itemSelect.unit_name"
       >
-        <!-- <DateRanger :handle-submit="handleInit"/> -->
+        <DateRanger :handle-submit="handleInit"/>
       </Header>
     </template>
 
@@ -34,7 +34,9 @@
               <div class="position-absolute top-0 start-50 translate-middle badge rounded-pill badge text-bg-light">
                 Device: {{ m.name }}
               </div>
-              <img src="@/assets/mammography.png" alt="Devices" width="140" class="mt-3" />
+              <h2 class="mt-2">{{ m[`_${field}`].avg }}%</h2>
+              <img src="@/assets/mammography.png" alt="Devices" width="110" />
+              <br>
               <router-link :to="{ name: 'operators', params: operatorParams(m.name) }">
                 Operators
               </router-link>
@@ -80,16 +82,15 @@
 </template>
 
 <script>
-  import h from '../helpers'
+  import help from '../helpers'
   import DateRanger from '../components/DateRanger.vue'
   import Header from '../components/Header.vue'
-  import Device from '../models/Device'
-  import Unit from '../models/Unit'
   import LayoutMain from '../layouts/Main.vue'
   import SidebarComponent from '../components/Sidebar.vue'
   import LineComponent from '../components/LineFooter.vue'
   import LineBarComponent from '../components/LineBarFooter.vue'
   import SelectComponent from '../components/Select.vue'
+  import { mapState } from 'vuex'
 
   export default {
     components: {
@@ -103,24 +104,37 @@
     },
     data() {
       return {
-        unit: {},
         devices: [],
         itemSelect: {},
         field: '',
       }
     },
+    computed: mapState({
+      customer: state => state.customer,
+      devicesCutomer: state => state.devices,
+      unit: state => state.main,
+    }),
     created() {
       this.handleInit()
     },
     methods: {
       handleInit (start='', end='') {
-        this.unit = (new Unit(start, end)).findBy(this.$route.params.unitName)
 
-        this.devices = (new Device(start, end)).getToUnit(this.$route.params.unitName)
-        this.devices.sort((a, b) => b._general_score.max-a._general_score.max)
+        this.$store.dispatch('fetch', {
+          name: this.$route.params.customer,
+          start,
+          end,
+        })
+        this.$store.dispatch('find', {name: this.$route.params.unitName, type: 'Unit:' })
+
+        this.devices = this.devicesCutomer.filter(item => item.unit_name==this.$route.params.unitName)
+
+        this.devices.sort((a, b) =>
+          b[`_${help.getKeyScore(a)}`].max - a[`_${help.getKeyScore(a)}`].max
+        )
 
         this.itemSelect = this.unit
-        this.field = h.getKeyScore(this.itemSelect)
+        this.field = help.getKeyScore(this.itemSelect)
       },
 
       operatorParams (deviceName = '') {

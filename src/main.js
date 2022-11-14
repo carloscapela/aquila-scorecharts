@@ -6,6 +6,7 @@ import VueApexCharts from 'vue3-apexcharts'
 import Popper from 'vue3-popper'
 import VCalendar from 'v-calendar'
 import vSelect from 'vue-select'
+import store from './store';
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
@@ -24,5 +25,6 @@ app.component('v-select', vSelect)
 // Use
 app.use(VCalendar, {})
 app.use(router)
+app.use(store)
 app.use(VueApexCharts)
 app.mount('#app')

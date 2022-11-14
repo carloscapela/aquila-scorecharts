@@ -3,7 +3,7 @@
 
     <template #header>
       <Header :customer="customer.name">
-        <!-- <DateRanger :handle-submit="handleInit"/> -->
+        <DateRanger :handle-submit="handleInit"/>
       </Header>
     </template>
 
@@ -28,7 +28,7 @@
           this.initMap()
         }">
         <SelectComponent
-          :options="customer.units"
+          :options="units"
           :main="customer"
           :callback="(v) => {
             this.itemSelect = v
@@ -43,14 +43,14 @@
 </template>
 
 <script>
-import h from '../helpers'
+import help from '../helpers'
 import DateRanger from '../components/DateRanger.vue'
-import Customer from '../models/Customer'
 import Header from '../components/Header.vue'
 import LayoutMain from '../layouts/Main.vue'
 import SidebarComponent from '../components/Sidebar.vue'
 import LineFooterComponent from '../components/LineFooter.vue'
 import SelectComponent from '../components/Select.vue'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -63,35 +63,42 @@ export default {
   },
   data() {
     return {
-      teste: 0,
-      // GENERAL
-      customer: {},
-      // Sidebar
       itemSelect: {}, // *
-      // MAPS
       mapOptions: {},
       field: '',
     }
   },
 
+  computed: mapState({
+    customer: state => state.customer,
+    units: state => state.units,
+  }),
+
   created() {
-    this.customer = (new Customer).findBy(this.$route.params.customer)
+    this.$store.dispatch('fetch', {
+      name: this.$route.params.customer
+    })
+
     if (!this.customer) window.location.href = '/'
 
     this.itemSelect = this.customer
 
     // Filter with param UNITNAME
     if (this.$route.params.unitName) {
-      this.itemSelect = this.customer.units.find(item => item.name == this.$route.params.unitName)
+      this.itemSelect = this.units.find(item => item.name == this.$route.params.unitName)
     }
     this.initMap()
-    this.field = h.getKeyScore(this.itemSelect)
+    this.field = help.getKeyScore(this.itemSelect)
     this.setUnitMap()
   },
 
   methods: {
     handleInit (start='', end='') {
-      this.customer = (new Customer(start, end)).findBy(this.$route.params.customer)
+      this.$store.dispatch('fetch', {
+        name: this.$route.params.customer,
+        start,
+        end,
+      })
       this.itemSelect = this.customer
       this.initMap()
       this.setUnitMap()
@@ -101,14 +108,14 @@ export default {
       let lat = []
       let lng = []
 
-      this.customer.units.map(unit => {
+      this.units.map(unit => {
         lat.push(unit.lat)
         lng.push(unit.long)
       })
 
       // Caso seja um customer
       this.mapOptions = {
-        center: h.avgLatLong(lat, lng),
+        center: help.avgLatLong(lat, lng),
         zoom: 10,
       }
     },
@@ -120,12 +127,12 @@ export default {
 
     getDataRadius(valueMax) {
       const data = []
-      this.customer.units.map(unit => data.push(unit[`_${this.field}`].max))
+      this.units.map(unit => data.push(unit[`_${this.field}`].max))
 
-      let baseCalc = Number((h.max(data) - h.min(data)) / 3 ).toFixed()
+      let baseCalc = Number((help.max(data) - help.min(data)) / 3 ).toFixed()
 
-      let baseMin = h.min(data) + baseCalc
-      let baseMax = h.max(data) - baseCalc
+      let baseMin = help.min(data) + baseCalc
+      let baseMax = help.max(data) - baseCalc
 
       // min
       let color = '#892d00'
@@ -133,19 +140,17 @@ export default {
       // avg
       if (valueMax >= baseMin && valueMax <= baseMax) {
         radius = 1500
-        color = '#00558C'
       }
       // max
       if (valueMax > baseMax) {
         radius = 2000
-        color = '#174664'
       }
 
       return { radius, color }
     },
 
     initMap () {
-      const loader = h.load()
+      const loader = help.load()
       // const tests = []
       loader.loadCallback(e => {
         if (e) { console.log(e) }
@@ -153,9 +158,7 @@ export default {
           const map = new google.maps.Map(document.getElementById('map'), this.mapOptions)
           let vm = this
           // LOOP
-          this.customer.units.map((unit, i) => {
-
-            // tests.push(unit[`_${this.field}`].max)
+          this.units.map((unit, i) => {
 
             const position = { lat: unit.lat, lng: unit.long }
 

@@ -77,9 +77,7 @@
       handle() {
         this.handleSubmit(this.range.start, this.range.end)
       },
-      clear () {
-        this.handleSubmit('', '')
-      }
+      clear () { this.handleSubmit('', '') }
     },
   }
 </script>

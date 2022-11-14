@@ -1,5 +1,7 @@
 import { Loader } from '@googlemaps/js-api-loader'
 
+import moment from 'moment'
+
 const API_KEY = 'AIzaSyBP4mlIFGg5zQdgvUe0uxQ1bHCSt8847uE'
 const VERSION = 'weekly'
 
@@ -29,7 +31,7 @@ export default {
 
     // returns a scoring key
     getKeyScore (main) {
-        const data = this.labels()
+        const data = this.scores()
 
         for (const field in data) {
             if (main[`_${field}`].avg) return field
@@ -43,9 +45,9 @@ export default {
         const data = {
             general_score: 'General Score',
             qual_score: 'Quality Score',
-            avg_exam_duration: 'AVG Time (m)',
+            avg_exam_duration: 'AVG Time',
             prod_score: 'Ocupation',
-            safety_score: 'Radiation Overdose',
+            safety_score: 'Peak Radiation Overdose',
             nps_score: 'NPS',
         }
 
@@ -56,9 +58,9 @@ export default {
         const data = {
             general_score: 'General Score',
             qual_score: 'Quality Score',
-            avg_exam_duration: 'AVG Time (m)',
+            avg_exam_duration: 'AVG Time',
             prod_score: 'Ocupation',
-            safety_score: 'Radiation Overdose',
+            safety_score: 'Peak Radiation Overdose',
             nps_score: 'NPS',
         }
 
@@ -82,6 +84,15 @@ export default {
         return { lat, lng }
     },
 
+    is_between(search, start, end) {
+        return moment(search).isBetween(
+            moment(start),
+            moment(end),
+            'days',
+            '[]'
+        )
+    },
+
     // Numbers
     percent (v) {
         return (v*100).toFixed()
@@ -98,20 +109,25 @@ export default {
     avg (array) {
         const sum = array.reduce((a, b) => Number(a) + Number(b), 0)
         // return sum
-        return (sum <= 0) ? 0 : decimal(sum / array.length)
+        return (sum <= 0) ? 0 : this.decimal(sum / array.length)
     },
+
+    float (v) {
+        return Number.parseFloat(v).toFixed(2)
+    },
+
     math (array) {
         return {
-            min: min(array),
-            max: max(array),
-            avg: avg(array),
+            min: this.min(array),
+            max: this.max(array),
+            avg: this.avg(array),
         }
     },
    mathTime (array) {
         return {
-            min: min(array),
-            max: max(array),
-            avg: avg(array),
+            min: this.min(array),
+            max: this.max(array),
+            avg: this.avg(array),
         }
-    }
+    },
 }

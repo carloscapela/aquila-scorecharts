@@ -1,12 +1,12 @@
 import dataAll from './all.json'
-import dataDevices from './devices.json'
+// import dataDevices from './devices.json'
 
 export default class API {
 
     // GETs
-    static getDataDevices () {
-        return this.getDataObject(dataDevices)
-    }
+    // static getDataDevices () {
+    //     return this.getDataObject(dataDevices)
+    // }
 
     static getDataAll() {
         return this.getDataObject(dataAll)
@@ -30,10 +30,8 @@ export default class API {
                 if (!data.length) {
                     data.push({ id: id, [field]: value })
                 } else {
-                    if (data[id])
-                        Object.assign(data[id], {[field]: value})
-                    else
-                        data.push({ id: id, [field]: value })
+                    if (data[id]) Object.assign(data[id], {[field]: value})
+                    else data.push({ id: id, [field]: value })
                 }
             })
         })

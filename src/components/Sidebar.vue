@@ -8,6 +8,7 @@
             :options="main[`_${scoreKey}`]"
             :callback="() => this.handleClick(scoreKey)"
             :active="key===scoreKey"
+            :strfix="'avg_exam_duration'===scoreKey?'':'%'"
         />
     </div>
 </div>

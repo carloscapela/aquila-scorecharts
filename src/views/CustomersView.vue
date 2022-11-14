@@ -75,7 +75,9 @@
   import Header from '../components/Header.vue'
   import Customer from '../models/Customer'
   import LayoutMain from '../layouts/Main.vue'
-  import {labels} from '../helpers/util'
+  // import {labels} from '../helpers/_util'
+  import { mapState } from 'vuex'
+  import help from '../helpers'
 
   export default {
     components: {
@@ -98,7 +100,7 @@
       },
     },
     setup() {
-      const scores = labels()
+      const scores = help.scores()
 
       return { scores }
     }

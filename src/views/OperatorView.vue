@@ -6,104 +6,89 @@
         :unit="device.unit_name"
         :device="device.name"
       >
-        <!-- <DateRanger :handle-submit="handleInit"/> -->
+        <DateRanger :handle-submit="handleInit"/>
       </Header>
     </template>
 
-    <div class="row">
-      <div class="col-sm-12 col-md-12 col-lg-9">
+    <template #content>
+      <div class="card position-relative">
+        <div class="device rounded"
+          @click="() => this.itemSelect = device"
+          :class="{ active: itemSelect.name == device.name }"
+        ></div>
+
+        <div
+          class="card-header link-primary pointer mb-4"
+          style="z-index: 99;"
+          @click="() => this.itemSelect = device">
+          Device: {{ device.name }}
+        </div>
+
         <div class="row text-center justify-content-md-center">
-
-          <fieldset class="row justify-content-md-center position-relative" style="min-height: 350px;">
-            <div class="device rounded"
-              @click="() => {
-                this.itemSelect = device
-                this.setClickData(this.field)
-              }"
-              :class="{ active: itemSelect.name == device.name }"
-            ></div>
-
-            <legend
-              @click="() => {
-                this.itemSelect = device
-                this.setClickData(this.field)
-              }"
-              class="link-primary pointer mb-5"
-              style="z-index: 99;">
-              Device: {{ device.name }}
-            </legend>
-
-            <div class="col-sm-12 col-md-12 col-lg-3 mb-3" v-for="m in operators">
-              <div
-                class="item position-relative"
-                :class="{ active: itemSelect.name == m.name }"
-                @click="() => {
-                  itemSelect = m
-                  this.setClickData(this.field)
-                }">
-                <div class="position-absolute top-0 start-50 translate-middle badge rounded-pill badge text-bg-light">
-                  Operator: {{ m.name }}
-                </div>
-                <img src="@/assets/operator.png" alt="Devices" width="140" class="mt-3" />
+          <div class="col-sm-12 col-md-12 col-lg-3 mb-3" v-for="m in operators">
+            <div
+              class="item position-relative shadow"
+              :class="{ active: itemSelect.name == m.name }"
+              @click="() => itemSelect = m">
+              <div class="position-absolute top-0 start-50 translate-middle badge rounded-pill badge text-bg-light">
+                Operator: {{ m.name }}
               </div>
+              <h2 class="mt-2">{{ m[`_${field}`].avg }}%</h2>
+              <img src="@/assets/operator.png" alt="Devices" width="110" class="mt-3" />
             </div>
-          </fieldset>
-
-          <div class="col-12">
-            <LineComponent
-              v-if="itemSelect.name !== device.name"
-              :options="series"
-              :field="field"
-              :main="itemSelect"
-            />
-            <LineBarComponent
-              v-if="itemSelect.name === device.name"
-              :options="series"
-              :field="field"
-              :main="itemSelect"
-            />
-            <QuaLineComponent
-              v-if="(field === 'qual_score') && itemSelect.name !== device.name"
-              :options="series"
-              :field="field"
-              :main="itemSelect"
-            />
           </div>
+        </div>
 
+        <div class="card-body" style="z-index: 99; background-color: #FFF;">
+          <!-- Removido :options="series" -->
+          <LineComponent
+            v-if="itemSelect.name !== device.name"
+            :field="field"
+            :main="itemSelect"
+          />
+          <LineBarComponent
+            v-if="itemSelect.name === device.name"
+            :field="field"
+            :main="itemSelect"
+          />
+          <QuaLineComponent
+            v-if="(field === 'qual_score') && itemSelect.name !== device.name"
+            :field="field"
+            :main="itemSelect"
+          />
         </div>
       </div>
 
-      <div class="col-sm-12 col-md-12 col-lg-3">
-        <SidebarComponent
-          :main="itemSelect"
-          :callback="(v) => this.setClickData(v)">
-          <SelectComponent
-            :options="operators"
-            :main="device"
-            :callback="(v) => {
-              this.itemSelect = v
-              this.setClickData(this.field)
-            }"
-            :selected="itemSelect"
-          />
-        </SidebarComponent>
-      </div>
+    </template>
 
-    </div>
+    <template #sidebar>
+      <SidebarComponent
+        :main="itemSelect"
+        :field="field"
+        :callback="(v) => this.field = v">
+        <SelectComponent
+          :options="operators"
+          :main="device"
+          :callback="(v) => this.itemSelect = v"
+          :selected="itemSelect"
+        />
+      </SidebarComponent>
+    </template>
 
   </LayoutMain>
 </template>
 
 <script>
+  import help from '../helpers'
   import Header from '../components/Header.vue'
   import DateRanger from '../components/DateRanger.vue'
-  import Device from '../models/Device'
   import LayoutMain from '../layouts/Main.vue'
   import SidebarComponent from '../components/Sidebar.vue'
   import LineComponent from '../components/LineFooter.vue'
   import SelectComponent from '../components/Select.vue'
   import LineBarComponent from '../components/LineBarFooter.vue'
   import QuaLineComponent from '../components/QuaLineFooter.vue'
+  import { mapState } from 'vuex'
 
   export default {
     components: {
@@ -118,10 +103,6 @@
     },
     data() {
       return {
-        device: {},
-        // LineFooter
-        // Obrigatório para o LineBar
-        series: [],
         field: '',
         itemSelect: {},
       }
@@ -129,7 +110,12 @@
     created() {
       this.handleInit()
     },
-    computed: {
+    computed: mapState({
+      devices: state => state.devices,
+      operators: state => state.operators,
+      device () {
+        return this.devices.find(d => d.name == this.$route.params.deviceName)
+      },
       operatorParams () {
         return {
           customer: this.itemSelect.customer_name,
@@ -137,23 +123,16 @@
           deviceName: this.device.name,
         }
       }
-    },
+    }),
     methods: {
       handleInit (start='', end='') {
-        this.device = (new Device(start, end)).findBy(this.$route.params.deviceName)
-        this.operators = (new Device(start, end)).getOperators(this.$route.params.deviceName, start, end)
+        this.$store.dispatch('fetch', { name: this.$route.params.customer, start, end })
         // Order
         this.operators.sort((a, b) =>  b._general_score.max-a._general_score.max)
-        this.operators.map((d, i) => this.operators[i].name = d.name.split('^').join(' '))
         // selected ITEM
         this.itemSelect = this.itemSelect.name ? this.itemSelect : this.device
         // init Sidebar
-        this.setClickData('general_score')
-      },
-
-      setClickData(field){
-        this.field = field
-        this.series = this.itemSelect[field]
+        this.field = help.getKeyScore(this.itemSelect)
       },
     },
   }
