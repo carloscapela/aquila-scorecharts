@@ -5,7 +5,11 @@
         :customer="itemSelect.customer_name"
         :unit="itemSelect.unit_name"
       >
-        <DateRanger :handle-submit="handleInit"/>
+        <DateRanger
+          :handle-submit="handleInit"
+          :start="range.start"
+          :end="range.end"
+        />
       </Header>
     </template>
 
@@ -34,7 +38,10 @@
               <div class="position-absolute top-0 start-50 translate-middle badge rounded-pill badge text-bg-light">
                 Device: {{ m.name }}
               </div>
-              <h2 class="mt-2">{{ m[`_${field}`].avg }}%</h2>
+              <h2 class="mt-2">
+                {{ this.indicate(m) }}
+                {{ this.symbol() }}
+              </h2>
               <img src="@/assets/mammography.png" alt="Devices" width="110" />
               <br>
               <router-link :to="{ name: 'operators', params: operatorParams(m.name) }">
@@ -82,6 +89,7 @@
 </template>
 
 <script>
+  import moment from 'moment'
   import help from '../helpers'
   import DateRanger from '../components/DateRanger.vue'
   import Header from '../components/Header.vue'
@@ -107,6 +115,10 @@
         devices: [],
         itemSelect: {},
         field: '',
+        range: {
+          start: null,
+          end: null,
+        }
       }
     },
     computed: mapState({
@@ -115,7 +127,9 @@
       unit: state => state.main,
     }),
     created() {
-      this.handleInit()
+      this.range.start = moment().subtract(1, 'months').format('YYYY-MM-DD')
+      this.range.end = moment().format('YYYY-MM-DD')
+      this.handleInit(this.range.start, this.range.end)
     },
     methods: {
       handleInit (start='', end='') {
@@ -143,7 +157,16 @@
           unitName: this.itemSelect.unit_name,
           deviceName: deviceName,
         }
-      }
+      },
+
+      symbol () {
+        return help.symbol(this.field)
+      },
+
+      indicate (item) {
+        const field = this.field
+        return field === 'total_exams' ? item[`_${field}`].total : item[`_${field}`].avg
+      },
     },
   }
 </script>

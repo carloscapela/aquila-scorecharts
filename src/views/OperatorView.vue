@@ -6,7 +6,11 @@
         :unit="device.unit_name"
         :device="device.name"
       >
-        <DateRanger :handle-submit="handleInit"/>
+        <DateRanger
+          :handle-submit="handleInit"
+          :start="range.start"
+          :end="range.end"
+        />
       </Header>
     </template>
 
@@ -31,10 +35,13 @@
               :class="{ active: itemSelect.name == m.name }"
               @click="() => itemSelect = m">
               <div class="position-absolute top-0 start-50 translate-middle badge rounded-pill badge text-bg-light">
-                Operator: {{ m.name }}
+                {{ m.name }}
               </div>
-              <h2 class="mt-2">{{ m[`_${field}`].avg }}%</h2>
-              <img src="@/assets/operator.png" alt="Devices" width="110" class="mt-3" />
+              <h2 class="mt-2">
+                {{ this.indicate(m) }}
+                {{ this.symbol() }}
+              </h2>
+              <img src="@/assets/operator.png" alt="Devices" width="110" class="mt--5"/>
             </div>
           </div>
         </div>
@@ -79,6 +86,7 @@
 </template>
 
 <script>
+  import moment from 'moment'
   import help from '../helpers'
   import Header from '../components/Header.vue'
   import DateRanger from '../components/DateRanger.vue'
@@ -105,10 +113,16 @@
       return {
         field: '',
         itemSelect: {},
+        range: {
+          start: null,
+          end: null,
+        }
       }
     },
     created() {
-      this.handleInit()
+      this.range.start = moment().subtract(1, 'months').format('YYYY-MM-DD')
+      this.range.end = moment().format('YYYY-MM-DD')
+      this.handleInit(this.range.start, this.range.end)
     },
     computed: mapState({
       devices: state => state.devices,
@@ -133,6 +147,13 @@
         this.itemSelect = this.itemSelect.name ? this.itemSelect : this.device
         // init Sidebar
         this.field = help.getKeyScore(this.itemSelect)
+      },
+      symbol () {
+        return help.symbol(this.field)
+      },
+      indicate (item) {
+        const field = this.field
+        return field === 'total_exams' ? item[`_${field}`].total : item[`_${field}`].avg
       },
     },
   }

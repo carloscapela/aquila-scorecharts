@@ -41,15 +41,3 @@ body {
 .pointer {
   cursor: pointer;
 }
-/* teste */
-.h-100 {
-  height: 100%!important;
-}
-.flex-between-center {
-  justify-content: space-between;
-  align-items: center;
-}
-.badge-soft-primary {
-  color: '#1c4f93';
-  background-color: '#d5e5fa';
-}

@@ -1,13 +1,15 @@
 <template>
     <div class="card mb-1">
-        <div class="card-body p-2 text-center">
+        <div class="card-header p-0 text-success text-center">
             <button
                 type="botton"
-                class="btn btn-link card-title text-success"
+                class="btn btn-link"
                 @click="handleClick">
                 {{ prefix }}
                 {{ main.name }}
             </button>
+        </div>
+        <div class="card-body p-2">
             <v-select
                 :options="options"
                 v-model="input"

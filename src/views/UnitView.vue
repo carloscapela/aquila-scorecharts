@@ -3,7 +3,11 @@
 
     <template #header>
       <Header :customer="customer.name">
-        <DateRanger :handle-submit="handleInit"/>
+        <DateRanger
+          :handle-submit="handleInit"
+          :start="range.start"
+          :end="range.end"
+        />
       </Header>
     </template>
 
@@ -43,6 +47,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import help from '../helpers'
 import DateRanger from '../components/DateRanger.vue'
 import Header from '../components/Header.vue'
@@ -66,6 +71,10 @@ export default {
       itemSelect: {}, // *
       mapOptions: {},
       field: '',
+      range: {
+        start: null,
+        end: null,
+      }
     }
   },
 
@@ -75,21 +84,9 @@ export default {
   }),
 
   created() {
-    this.$store.dispatch('fetch', {
-      name: this.$route.params.customer
-    })
-
-    if (!this.customer) window.location.href = '/'
-
-    this.itemSelect = this.customer
-
-    // Filter with param UNITNAME
-    if (this.$route.params.unitName) {
-      this.itemSelect = this.units.find(item => item.name == this.$route.params.unitName)
-    }
-    this.initMap()
-    this.field = help.getKeyScore(this.itemSelect)
-    this.setUnitMap()
+    this.range.start = moment().subtract(1, 'months').format('YYYY-MM-DD')
+    this.range.end = moment().format('YYYY-MM-DD')
+    this.handleInit(this.range.start, this.range.end)
   },
 
   methods: {
@@ -99,7 +96,14 @@ export default {
         start,
         end,
       })
+      if (!this.customer || !this.$route.params.customer) window.location.href = '/'
+
       this.itemSelect = this.customer
+      // Filter with param UNITNAME
+      if (this.$route.params.unitName) {
+        this.itemSelect = this.units.find(item => item.name == this.$route.params.unitName)
+      }
+      this.field = help.getKeyScore(this.itemSelect)
       this.initMap()
       this.setUnitMap()
     },
@@ -167,15 +171,21 @@ export default {
               customer: unit.customer_name,
             }}).href
 
+            let strScore =  help.scores(this.field) + ': '  +
+              unit[`_${this.field}`].avg +
+              help.symbol(this.field)
+
             // JANELA DE CONTEUDO
             let contentTitle =
               `<div class="card border-0 p-0 m-0 text-center">` +
                 `<h5 class="card-title"><i class="bi bi-house-heart"></i> ${unit.name} </h5>` +
+                `<h6>${strScore}</h6>` +
               `</div>`
 
             let contentString =
               `<div class="card border-0 p-0 m-0 text-center">` +
                 `<h5 class="card-title"><i class="bi bi-house-heart"></i> ${unit.name} </h5>` +
+                `<h6>${strScore}</h6>` +
                 `<ul class="list-group list-group-flush p-0">` +
                   `<div class="d-grid gap-2">
                     <a href="${href}" class="btn btn-link"><i class="bi bi-pc-display-horizontal"></i> Devices</a>

@@ -8,7 +8,7 @@
         ></v-select>
         <apexchart
             type="line"
-            height="350"
+            height="300"
             :options="chartOptions"
             :series="series">
         </apexchart>
@@ -17,7 +17,7 @@
 
 <script>
 import moment from 'moment'
-import h from '../helpers'
+import help from '../helpers'
 
 export default {
     props: {
@@ -38,7 +38,7 @@ export default {
         }
     },
     created() {
-        this.qualities = h.qualitys()
+        this.qualities = help.qualities()
         this.formatDate()
         this.handleInit()
         this.handleOptions()
@@ -51,18 +51,14 @@ export default {
             this.chartOptions = {
                 chart: {
                     type: 'line',
-                    height: 350,
-                    toolbar: {
-                        show: true
-                    },
-                    zoom: {
-                        enabled: true
-                    },
+                    height: 300,
+                    toolbar: { show: true },
+                    zoom: { enabled: true },
                 },
                 grid: {
                     borderColor: '#e7e7e7',
                     row: {
-                        colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                        colors: ['#f3f3f3', 'transparent'],
                         opacity: 0.5,
                     },
                 },
@@ -95,11 +91,11 @@ export default {
             const media = []
             // if no value is selected
             if (!this.inputs.length) {
-                for (let k in this.qualities) media.push( Number(h.avg(this.main[k])) )
-                let valueMin = h.min(media)
-                let valueMax = h.max(media)
+                for (let k in this.qualities) media.push( Number(help.avg(this.main[k])) )
+                let valueMin = help.min(media)
+                let valueMax = help.max(media)
                 for (let k in this.qualities) {
-                    let value = Number(h.avg(this.main[k]))
+                    let value = Number(help.avg(this.main[k]))
                     if (value === valueMin) {
                         dt.push({ name: this.qualities[k], data: this.main[k] })
                         this.inputs.push({ id: k, label: this.qualities[k] })
@@ -109,9 +105,8 @@ export default {
                         this.inputs.push({ id: k, label: this.qualities[k] })
                     }
                 }
-            } else {
-                this.inputs.map(input => dt.push({ name: input.label, data: this.main[input.id] }))
             }
+            else this.inputs.map(input => dt.push({ name: input.label, data: this.main[input.id] }))
 
             this.series = dt
         },

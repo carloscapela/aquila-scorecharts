@@ -1,5 +1,9 @@
 import timeline_9 from './timeline_9.json'
 import timeline_12 from './timeline_12.json'
+import timeline_18 from './timeline_12.json'
+import timeline_19 from './timeline_12.json'
+import timeline_25 from './timeline_12.json'
+import timeline_27 from './timeline_12.json'
 import help from '../helpers'
 
 export default {
@@ -26,14 +30,6 @@ export default {
         data = this.toJson(data, start, end)
 
         return data
-    },
-
-    getCustomer (customer_name, start='', end='') {
-        const data = this.toObj(customer_name, start, end)
-
-        const dataCustomer = data.filter(item =>
-            item.type==='Customer:' && item.name===customer_name
-        )
     },
 
     // TYPES
@@ -169,16 +165,16 @@ export default {
         // Add data AVGs
         data.map(item => {
             item = Object.assign(item,{
-                _avg_exam_duration: help.math(item.avg_exam_duration),
+                _avg_exam_duration: help.mathTime(item.avg_exam_duration),
                 _general_score: help.math(item.general_score),
                 _nps_score: help.math(item.nps_score),
                 _prod_score: help.math(item.prod_score),
                 _qual_score: help.math(item.qual_score),
                 _safety_score: help.math(item.safety_score),
                 _study_date: item.study_date,
-                _total_exams: help.math(item.total_exams),
                 _start_time: help.math(item.start_time),
                 _exam_real_duration: item.exam_real_duration,
+                _total_exams: help.math(item.total_exams),
             })
         })
 
