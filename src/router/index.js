@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import UnitView from '../views/UnitView.vue'
+import UnitsView from '../views/UnitsView.vue'
 import DevicesView from '../views/DevicesView.vue'
-import OperatorView from '../views/OperatorView.vue'
+import OperatorsView from '../views/OperatorsView.vue'
+// lists
+import ListDevicesView from '../views/Lists/DevicesView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,7 +17,7 @@ const router = createRouter({
     {
       path: '/:customer/:unitName?',
       name: 'customer',
-      component: UnitView,
+      component: UnitsView,
     },
     {
       path: '/:customer/unit/:unitName/devices',
@@ -25,7 +27,13 @@ const router = createRouter({
     {
       path: '/:customer/unit/:unitName/devices/:deviceName',
       name: 'operators',
-      component: OperatorView,
+      component: OperatorsView,
+    },
+    // Lists
+    {
+      path: '/:customer/list-devices',
+      name: 'ListDevices',
+      component: ListDevicesView,
     },
     // {
     //   path: '/:customer/unit/:unitName/devices/:deviceName/xy',
