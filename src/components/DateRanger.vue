@@ -25,14 +25,6 @@
             <button class="btn btn-outline-secondary" @click="handle()">
               <i class="bi bi-search"></i>
             </button>
-            <!-- <button
-              class="btn btn-outline-secondary"
-              type="reset"
-              :disabled="(!inputValue.end && !inputValue.start)"
-              @click="clear()"
-            >
-              <i class="bi bi-trash3"></i>
-            </button> -->
           </div>
         </div>
         <!-- <div class="row g-3">
