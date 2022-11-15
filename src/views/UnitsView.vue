@@ -129,9 +129,9 @@ export default {
 
     getDataRadius(valueMax) {
       let values = []
-      let radius = 500
+      let radius = 3500
       this.units.map(unit => values.push(unit[`_${this.field}`].max))
-      values.sort((a, b) => a - b)
+      values.sort((a, b) => b - a)
 
       values.map((v, i) => {
         if(v===valueMax) radius = radius + (150*(i+1))
