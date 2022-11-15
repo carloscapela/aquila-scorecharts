@@ -2,7 +2,7 @@
     <apexchart
         v-if="series.length"
         type="area"
-        height="350"
+        height="300"
         :options="chartOptions"
         :series="series">
     </apexchart>
@@ -70,7 +70,7 @@ export default {
 
             this.chartOptions = {
                 chart: {
-                    height: 350,
+                    height: 300,
                     type: 'area',
                     zoom: {
                         type: 'x',
@@ -146,7 +146,7 @@ export default {
                     },
                 },
                 dataLabels: {
-                    enabled: false
+                    enabled: false,
                 },
                 stroke: {
                 show: true,
@@ -167,7 +167,18 @@ export default {
                 tooltip: {
                     y: {
                         formatter: (val) => val + " m",
-                    }
+                    },
+                    custom: ({series, seriesIndex, dataPointIndex, w}) => {
+                        const i = dataPointIndex
+                        return `<div style="padding: 5px;">`+
+                            `<h6>Duration: ${series[seriesIndex][i]} min</h6>`+
+                            `<ul>`+
+                                `<li><b>AVG Grade:</b> ${this.main.avg_grade[i]}</li>`+
+                                `<li><b>Study Description:</b> ${this.main.study_description[i]}</li>`+
+                                `<li><b>N. Images:</b> ${this.main.n_images[i]}</li>`+
+                            `<ul>`+
+                        `</div>`
+                    },
                 },
                 title: {
                     text: this.barTitle,
@@ -176,26 +187,36 @@ export default {
             }
         },
         setDataColumnChart (index) {
+            const operatorDurations = []
             const durations = []
             const timeCategories = []
             const dates = this.main.study_date
             const dateSelected =  dates[index]
+            const dateStr = moment(dateSelected).format('MMM DD YYYY')
+
             dates.filter((d, i) => {
                 if (moment(d).isSame(dateSelected)) {
+                    let name = this.main.operator_name[i]
+
+                    let key = operatorDurations.findIndex(d => d.name === name)
+                    if (key < 0) {
+                        operatorDurations.push({
+                            name,
+                            data: [this.main.exam_real_duration[i]],
+                        })
+                    } else {
+                        operatorDurations[key].data.push(this.main.exam_real_duration[i])
+                    }
+
                     durations.push(this.main.exam_real_duration[i])
                     timeCategories.push(this.main.start_time[i])
                 }
             })
-            const dateStr = moment(dateSelected).format('MMM DD YYYY')
+
             this.barDurationMax = h.max(durations)
-            // this.barColors = this.setBarColors(durations)
-            // console.log(this.barColors)
             this.barCategories = timeCategories
             this.barTitle = `One Day View: ${dateStr}`
-            this.barSeries = [{
-                name: 'Duration',
-                data: durations,
-            }]
+            this.barSeries = operatorDurations
         },
     },
     watch: {

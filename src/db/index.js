@@ -155,7 +155,7 @@ export default {
                 data[key].prod_score.push(help.percent(item.prod_score))
                 data[key].safety_score.push(help.percent(item.safety_score))
                 data[key].nps_score.push(help.percent(item.nps_score))
-                data[key].exam_real_duration.push(help.decimal(item.exam_real_duration))
+                data[key].exam_real_duration.push(help.float(item.exam_real_duration))
                 data[key].study_date.push(item.study_date)
                 data[key].total_exams.push(item.total_exams)
                 data[key].start_time.push(item.start_time)
