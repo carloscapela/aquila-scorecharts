@@ -33,7 +33,7 @@ const SYMBOL = {
     total_exams: '',
     general_score: '%',
     qual_score: '%',
-    avg_exam_duration: '',
+    avg_exam_duration: 'min',
     prod_score: '%',
     safety_score: '%',
     nps_score: '%',

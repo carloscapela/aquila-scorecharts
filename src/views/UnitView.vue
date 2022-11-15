@@ -125,32 +125,19 @@ export default {
     },
 
     // Obrigatório para o LineBar
-    setClickData (field) {
-      this.field = field
-    },
+    setClickData (field) { this.field = field },
 
     getDataRadius(valueMax) {
-      const data = []
-      this.units.map(unit => data.push(unit[`_${this.field}`].max))
+      let values = []
+      let radius = 500
+      this.units.map(unit => values.push(unit[`_${this.field}`].max))
+      values.sort((a, b) => a - b)
 
-      let baseCalc = Number((help.max(data) - help.min(data)) / 3 ).toFixed()
+      values.map((v, i) => {
+        if(v===valueMax) radius = radius + (150*(i+1))
+      })
 
-      let baseMin = help.min(data) + baseCalc
-      let baseMax = help.max(data) - baseCalc
-
-      // min
-      let color = '#892d00'
-      let radius = 1200;
-      // avg
-      if (valueMax >= baseMin && valueMax <= baseMax) {
-        radius = 1500
-      }
-      // max
-      if (valueMax > baseMax) {
-        radius = 2000
-      }
-
-      return { radius, color }
+      return radius
     },
 
     initMap () {
@@ -171,6 +158,8 @@ export default {
               customer: unit.customer_name,
             }}).href
 
+            let radius = this.getDataRadius(unit[`_${this.field}`].max)
+
             let strScore =  help.scores(this.field) + ': '  +
               unit[`_${this.field}`].avg +
               help.symbol(this.field)
@@ -178,13 +167,13 @@ export default {
             // JANELA DE CONTEUDO
             let contentTitle =
               `<div class="card border-0 p-0 m-0 text-center">` +
-                `<h5 class="card-title"><i class="bi bi-house-heart"></i> ${unit.name} </h5>` +
+                `<h5 class="card-title"><i class="bi bi-house-heart"></i>${unit.name}</h5>` +
                 `<h6>${strScore}</h6>` +
               `</div>`
 
             let contentString =
               `<div class="card border-0 p-0 m-0 text-center">` +
-                `<h5 class="card-title"><i class="bi bi-house-heart"></i> ${unit.name} </h5>` +
+                `<h5 class="card-title"><i class="bi bi-house-heart"></i>${unit.name}</h5>` +
                 `<h6>${strScore}</h6>` +
                 `<ul class="list-group list-group-flush p-0">` +
                   `<div class="d-grid gap-2">
@@ -204,7 +193,7 @@ export default {
               pixelOffset: new google.maps.Size(0, -25),
             })
 
-            let colorSelect = this.getDataRadius(unit[`_${this.field}`].max).color
+            let colorSelect = '#174664'
             // Selected ITEM
             if (this.itemSelect.name == unit.name) {
               colorSelect = '#ff0000'
@@ -221,8 +210,8 @@ export default {
               fillOpacity: 0.35,
               map,
               center: position,
-              // radius: unit[`_${this.field}`].max * 20,
-              radius: this.getDataRadius(unit[`_${this.field}`].max).radius,
+              // radius: this.getDataRadius(unit[`_${this.field}`].max).radius,
+              radius: radius,
             })
 
             infoWindow.addListener('closeclick', () => {

@@ -143,6 +143,7 @@
 
         this.devices = this.devicesCutomer.filter(item => item.unit_name==this.$route.params.unitName)
 
+        // Order
         this.devices.sort((a, b) =>
           b[`_${help.getKeyScore(a)}`].max - a[`_${help.getKeyScore(a)}`].max
         )
