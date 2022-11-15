@@ -1,5 +1,5 @@
 <template>
-  <LayoutMain>
+  <LayoutMain :customer="customer.name">
 
     <template #header>
       <Header :customer="customer.name">

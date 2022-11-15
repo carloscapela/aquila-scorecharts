@@ -1,22 +1,24 @@
 <template>
   <nav class="navbar navbar-expand-lg bg-light shadow sticky-top">
     <div class="container-fluid">
-      <!-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Enable body scrolling</button> -->
-      <router-link
+
+      <button class="btn btn-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
+        <i class="bi bi-list"></i>
+      </button>
+
+      <!-- <router-link
         v-if="customer"
         :to="{ name: 'customer', params: { customer: customer } }"
         class="navbar-brand">
-        <img src="@/assets/aquila.jpg" :alt="customer" width="40" height="40" />
         Customer {{ customer }}
-      </router-link>
+      </router-link> -->
 
-      <router-link
-        v-if="!customer"
-        :to="{ name: 'home' }"
+      <span
+        v-if="customer"
         class="navbar-brand">
-        <img src="@/assets/aquila.jpg" width="40" height="40" />
-        List Customers
-      </router-link>
+        Customer {{ customer }}
+      </span>
+
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -55,34 +57,7 @@
               <i class="bi bi-caret-right-fill"></i>
               Operators
             </span>
-            <!-- <ul class="dropdown-menu">
-              <li>
-                <router-link
-                  :to="{ name: 'operators', params: {
-                    customer,
-                    unitName: unit,
-                    deviceName: device,
-                  }}"
-                  class="dropdown-item"
-                >
-                  List Operators
-                </router-link>
-              </li>
-              <li>
-                <router-link
-                  :to="{ name: 'OperatorXY', params: {
-                    customer,
-                    unitName: unit,
-                    deviceName: device,
-                  }}"
-                  class="dropdown-item"
-                >
-                  XY to Operators
-                </router-link>
-              </li>
-            </ul> -->
           </li>
-
         </ul>
         <slot></slot>
       </div>
@@ -91,9 +66,7 @@
 </template>
 
 <script>
-import DateRanger from './DateRanger.vue'
 export default {
-  components: {DateRanger},
   props: {
     customer: {
       type: Number,
