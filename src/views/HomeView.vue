@@ -1,27 +1,24 @@
 <template>
-  <LayoutMain>
-    <div class="row justify-content-md-center">
-      <div class="col">
-        <img
-          src="@/assets/aquila.jpg"
-          class="rounded mx-auto d-block animate__animated animate__bounce"
-          width="200"
-        />
+  <main>
+    <div class="container-fluid mt-5">
+      <div class="row justify-content-md-center">
+        <div class="col mt-5">
+          <img
+            src="@/assets/aquila.jpg"
+            class="rounded mx-auto d-block animate__animated animate__bounce"
+            width="200"
+          />
+        </div>
       </div>
     </div>
-  </LayoutMain>
+  </main>
 </template>
 
 <script>
-  import LayoutMain from '../layouts/Main.vue'
-
-  export default {
-    components: {
-      LayoutMain,
-    },
-    created() {
-      this.$store.dispatch('fetch', 9)
-      console.log( this.$store.state.customer )
-    },
-  }
 </script>
+
+<style>
+  body {
+    background-color: #fff;
+  }
+</style>
