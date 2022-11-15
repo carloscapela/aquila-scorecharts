@@ -78,6 +78,10 @@ export default {
     // symmetry_mlo_images: Array,
     // symmetry_left_images: Array,
     // symmetry_right_images: Array,
+    // accession_number: Array,
+    // avg_grade: Array,
+    // study_description: Array,
+    // n_images: Array,
     toJson (dataJson, start='', end='') {
         const data = []
         // let dataJson = this.toObj(id)
@@ -126,6 +130,11 @@ export default {
                     symmetry_mlo_images: [],
                     symmetry_left_images: [],
                     symmetry_right_images: [],
+                    // ADD 15-11-2022
+                    accession_number: [],
+                    avg_grade: [],
+                    study_description: [],
+                    n_images: [],
                 })
             }
         })
@@ -167,6 +176,11 @@ export default {
                 data[key].symmetry_mlo_images.push(help.percent(item.symmetry_mlo_images))
                 data[key].symmetry_left_images.push(help.percent(item.symmetry_left_images))
                 data[key].symmetry_right_images.push(help.percent(item.symmetry_right_images))
+                // ADD 15-11-2022
+                data[key].accession_number.push(item.accession_number)
+                data[key].avg_grade.push(item.avg_grade)
+                data[key].study_description.push(item.study_description)
+                data[key].n_images.push(item.n_images)
             }
         })
         // Add data AVGs

@@ -47,7 +47,6 @@
         </div>
 
         <div class="card-body" style="z-index: 99; background-color: #FFF;">
-          <!-- Removido :options="series" -->
           <LineComponent
             v-if="itemSelect.name !== device.name"
             :field="field"
@@ -126,7 +125,12 @@
     },
     computed: mapState({
       devices: state => state.devices,
-      operators: state => state.operators,
+      operatorsStore: state => state.operators,
+      operators () {
+        const operators = this.operatorsStore.filter(m => m.operator_name.includes(this.device.name))
+        operators.sort((a, b) =>  b[this.getField].max-a[this.getField].max)
+        return operators
+      },
       device () {
         return this.devices.find(d => d.name == this.$route.params.deviceName)
       },
@@ -136,13 +140,14 @@
           unitName: this.itemSelect.unit_name,
           deviceName: this.device.name,
         }
-      }
+      },
+      getField () {
+        return `_${this.field}`
+      },
     }),
     methods: {
       handleInit (start='', end='') {
         this.$store.dispatch('fetch', { name: this.$route.params.customer, start, end })
-        // Order
-        this.operators.sort((a, b) =>  b._general_score.max-a._general_score.max)
         // selected ITEM
         this.itemSelect = this.itemSelect.name ? this.itemSelect : this.device
         // init Sidebar
