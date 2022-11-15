@@ -81,6 +81,11 @@ export default {
         )
     },
 
+    // Return format MMM DD YYYY
+    dateFormat(dns) {
+        let value = dns.replace('T00:00:00.000Z', '')
+        return moment(value).format('MMM DD YYYY')
+    },
     // Numbers
     percent (v) { return (v*100).toFixed() },
 
@@ -119,7 +124,7 @@ export default {
         }
     },
 
-   mathTime (array) {
+    mathTime (array) {
         return {
             min: this.min(array),
             max: this.max(array),

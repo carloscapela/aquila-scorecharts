@@ -1,6 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg bg-light shadow sticky-top">
     <div class="container-fluid">
+      <!-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Enable body scrolling</button> -->
       <router-link
         v-if="customer"
         :to="{ name: 'customer', params: { customer: customer } }"

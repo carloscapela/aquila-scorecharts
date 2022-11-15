@@ -33,7 +33,7 @@
             <div
               class="item position-relative shadow"
               :class="{ active: itemSelect.name == m.name }"
-              @click="() => itemSelect = m">
+              @click="() => this.itemSelect = m">
               <div class="position-absolute top-0 start-50 translate-middle badge rounded-pill badge text-bg-light">
                 {{ m.name }}
               </div>
@@ -149,7 +149,8 @@
       handleInit (start='', end='') {
         this.$store.dispatch('fetch', { name: this.$route.params.customer, start, end })
         // selected ITEM
-        this.itemSelect = this.itemSelect.name ? this.itemSelect : this.device
+        this.itemSelect = this.device
+        // this.itemSelect = this.itemSelect.name ? this.itemSelect : this.device
         // init Sidebar
         this.field = help.getKeyScore(this.itemSelect)
       },

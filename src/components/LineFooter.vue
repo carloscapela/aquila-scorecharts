@@ -10,9 +10,7 @@
 </template>
 
 <script>
-import moment from 'moment'
 import h from '../helpers'
-
 export default {
     props: {
         field: String,
@@ -41,7 +39,7 @@ export default {
         // convert date & time
         formatDate() {
             const dt = []
-            this.main.study_date.map(d => dt.push(moment(d).format('MMM DD YYYY')))
+            this.main.study_date.map(d => dt.push(h.dateFormat(d)))
             this.dates = dt
         },
         handleInit() {

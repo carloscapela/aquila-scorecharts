@@ -59,7 +59,7 @@ export default {
         // convert date & time
         formatDate() {
             const dt = []
-            this.main.study_date.map(d => dt.push(moment(d).format('MMM DD YYYY')))
+            this.main.study_date.map(d => dt.push(h.dateFormat(d)))
             this.dates = dt
         },
         handleInit() {
@@ -192,7 +192,7 @@ export default {
             const timeCategories = []
             const dates = this.main.study_date
             const dateSelected =  dates[index]
-            const dateStr = moment(dateSelected).format('MMM DD YYYY')
+            const dateStr = h.dateFormat(dateSelected)
 
             dates.filter((d, i) => {
                 if (moment(d).isSame(dateSelected)) {
