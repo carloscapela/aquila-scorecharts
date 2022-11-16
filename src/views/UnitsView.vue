@@ -161,7 +161,7 @@ export default {
             let radius = this.getDataRadius(unit[`_${this.field}`].max)
 
             let strScore =  help.scores(this.field) + ': '  +
-              unit[`_${this.field}`].avg +
+              ('total_exams' === this.field ? unit[`_${this.field}`].total : unit[`_${this.field}`].avg) +
               help.symbol(this.field)
 
             // JANELA DE CONTEUDO

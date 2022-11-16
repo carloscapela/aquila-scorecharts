@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+// import moment from 'moment'
 import help from '../helpers'
 
 export default {
@@ -113,7 +113,7 @@ export default {
         // convert date & time
         formatDate() {
             const dt = []
-            this.main.study_date.map(d => dt.push(h.dateFormat(d)))
+            this.main.study_date.map(d => dt.push(help.dateFormat(d)))
             this.dates = dt
         },
     },

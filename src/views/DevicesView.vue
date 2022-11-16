@@ -22,11 +22,11 @@
         ></div>
 
         <div
-            class="card-header link-primary pointer mb-4"
-            style="z-index: 99;"
-            @click="() => this.itemSelect = unit"
-          >
-            Unit: {{ itemSelect.unit_name }}
+          class="card-header link-primary pointer mb-4"
+          style="z-index: 99;"
+          @click="() => this.itemSelect = unit"
+        >
+          Unit: {{ itemSelect.unit_name }}
         </div>
 
         <div class="row text-center justify-content-md-center">
@@ -42,6 +42,9 @@
                 {{ this.indicate(m) }}
                 {{ this.symbol() }}
               </h2>
+              <!-- <pre>
+                {{ m.total_exams }}
+              </pre> -->
               <img src="@/assets/mammography.png" alt="Devices" width="110" />
               <br>
               <router-link :to="{ name: 'operators', params: operatorParams(m.name) }">
@@ -51,7 +54,7 @@
           </div>
         </div>
 
-        <div class="card-body" style="z-index: 99; background-color: #FFF;">
+        <div class="card-body p-2" style="z-index: 99; background-color: #FFF;">
           <LineComponent
             v-if="itemSelect.name === this.unit.name"
             :field="field"
@@ -133,21 +136,17 @@
     },
     methods: {
       handleInit (start='', end='') {
-
         this.$store.dispatch('fetch', {
           name: this.$route.params.customer,
           start,
           end,
         })
         this.$store.dispatch('find', {name: this.$route.params.unitName, type: 'Unit:' })
-
         this.devices = this.devicesCutomer.filter(item => item.unit_name==this.$route.params.unitName)
-
         // Order
         this.devices.sort((a, b) =>
           b[`_${help.getKeyScore(a)}`].max - a[`_${help.getKeyScore(a)}`].max
         )
-
         this.itemSelect = this.unit
         this.field = help.getKeyScore(this.itemSelect)
       },
@@ -160,9 +159,7 @@
         }
       },
 
-      symbol () {
-        return help.symbol(this.field)
-      },
+      symbol () { return help.symbol(this.field) },
 
       indicate (item) {
         const field = this.field

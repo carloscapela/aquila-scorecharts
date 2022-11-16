@@ -38,6 +38,7 @@ export default {
             barDurationMax: 120,
             barColors: ['#77B6EA'],
             // barColors: ['green'],
+            operatorsName: [],
         }
     },
     created() {
@@ -85,9 +86,7 @@ export default {
                         blur: 10,
                         opacity: 0.2
                     },
-                    toolbar: {
-                        show: true
-                    },
+                    toolbar: { show: true },
                     // TEMP
                     events: {
                         click: (e, c, config) => {
@@ -109,9 +108,7 @@ export default {
                     type: 'datetime',
                 },
                 yaxis: this.getYaxis(),
-                markers: {
-                    size: 1
-                },
+                markers: { size: 1 },
                 legend: {
                     position: 'top',
                     horizontalAlign: 'right',
@@ -130,14 +127,17 @@ export default {
                 chart: {
                     type: 'bar',
                     height: 250,
-                    toolbar: {
-                        show: true
-                    },
-                    zoom: {
-                        enabled: true
-                    },
+                    toolbar: { show: true },
+                    zoom: { enabled: true },
                 },
-                // colors: this.barColors,
+                // colors: [function({ value, seriesIndex, w }) {
+                //     console.log(seriesIndex, value)
+                // //     const i = dataPointIndex
+                // //     if (this.barCategories[i][0] === '07:30:50') {
+                // //         return '#000'
+                // //     }
+                //     return '#D9534F'
+                // }],
                 plotOptions: {
                     bar: {
                         horizontal: false,
@@ -145,37 +145,33 @@ export default {
                         endingShape: 'rounded'
                     },
                 },
-                dataLabels: {
-                    enabled: false,
-                },
+                dataLabels: { enabled: false },
                 stroke: {
-                show: true,
-                width: 2,
+                    show: true,
+                    width: 2,
                     colors: ['transparent']
                 },
-                xaxis: {
-                    categories: this.barCategories,
-                },
+                xaxis: { categories: this.barCategories },
                 yaxis: {
                     title: { text: 'Duration (min)' },
                     min: 1,
                     max: this.barDurationMax,
                 },
-                fill: {
-                    opacity: 1
-                },
+                fill: { opacity: 1 },
                 tooltip: {
-                    y: {
-                        formatter: (val) => val + " m",
-                    },
                     custom: ({series, seriesIndex, dataPointIndex, w}) => {
-                        const i = dataPointIndex
+                        var item = this.main
+                        var i = dataPointIndex
+                        var key = this.main.start_time.findIndex(d => this.barCategories[i][0]===d)
+
                         return `<div style="padding: 5px;">`+
                             `<h6>Duration: ${series[seriesIndex][i]} min</h6>`+
                             `<ul>`+
-                                `<li><b>AVG Grade:</b> ${this.main.avg_grade[i]}</li>`+
-                                `<li><b>Study Description:</b> ${this.main.study_description[i]}</li>`+
-                                `<li><b>N. Images:</b> ${this.main.n_images[i]}</li>`+
+                                `<li><b>Operator Name:</b> ${item.operator_name[key]}</li>`+
+                                `<li><b>Accession Number:</b> ${item.accession_number[key]}</li>`+
+                                `<li><b>AVG Grade:</b> ${item.avg_grade[key]}</li>`+
+                                `<li><b>Study Description:</b> ${item.study_description[key]}</li>`+
+                                `<li><b>N. Images:</b> ${item.n_images[key]}</li>`+
                             `<ul>`+
                         `</div>`
                     },
@@ -186,7 +182,9 @@ export default {
                 },
             }
         },
+
         setDataColumnChart (index) {
+            const names = []
             const operatorDurations = []
             const durations = []
             const timeCategories = []
@@ -196,27 +194,32 @@ export default {
 
             dates.filter((d, i) => {
                 if (moment(d).isSame(dateSelected)) {
-                    let name = this.main.operator_name[i]
-
-                    let key = operatorDurations.findIndex(d => d.name === name)
-                    if (key < 0) {
-                        operatorDurations.push({
-                            name,
-                            data: [this.main.exam_real_duration[i]],
-                        })
-                    } else {
-                        operatorDurations[key].data.push(this.main.exam_real_duration[i])
-                    }
-
+                    operatorDurations.push(this.main.exam_real_duration[i])
+                    // operatorDurations.push({
+                    //     y: this.main.exam_real_duration[i],
+                    //     // x: this.main.start_time[i],
+                    //     x: [
+                    //         this.main.start_time[i],
+                    //         this.main.operator_name[i],
+                    //     ],
+                    // })
+                    timeCategories.push([
+                        this.main.start_time[i],
+                        this.main.operator_name[i]
+                    ])
+                    names.push(this.main.operator_name[i])
                     durations.push(this.main.exam_real_duration[i])
-                    timeCategories.push(this.main.start_time[i])
                 }
             })
 
             this.barDurationMax = h.max(durations)
             this.barCategories = timeCategories
             this.barTitle = `One Day View: ${dateStr}`
-            this.barSeries = operatorDurations
+            this.barSeries = [{
+                name: 'Durations',
+                data: operatorDurations,
+            }]
+            this.operatorsName = names
         },
     },
     watch: {

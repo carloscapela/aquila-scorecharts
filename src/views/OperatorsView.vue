@@ -1,5 +1,5 @@
 <template>
-  <LayoutMain>
+  <LayoutMain :customer="customer.name">
     <template #header>
       <Header
         :customer="device.customer_name"
@@ -19,12 +19,14 @@
         <div class="device rounded"
           @click="() => this.itemSelect = device"
           :class="{ active: itemSelect.name == device.name }"
-        ></div>
+        >
+        </div>
 
         <div
           class="card-header link-primary pointer mb-4"
           style="z-index: 99;"
-          @click="() => this.itemSelect = device">
+          @click="() => this.itemSelect = device"
+        >
           Device: {{ device.name }}
         </div>
 
@@ -46,7 +48,7 @@
           </div>
         </div>
 
-        <div class="card-body" style="z-index: 99; background-color: #FFF;">
+        <div class="card-body p-2" style="z-index: 99; background-color: #FFF;">
           <LineComponent
             v-if="itemSelect.name !== device.name"
             :field="field"
@@ -124,6 +126,7 @@
       this.handleInit(this.range.start, this.range.end)
     },
     computed: mapState({
+      customer: state => state.customer,
       devices: state => state.devices,
       operatorsStore: state => state.operators,
       operators () {
@@ -141,22 +144,15 @@
           deviceName: this.device.name,
         }
       },
-      getField () {
-        return `_${this.field}`
-      },
+      getField () { return `_${this.field}` },
     }),
     methods: {
       handleInit (start='', end='') {
         this.$store.dispatch('fetch', { name: this.$route.params.customer, start, end })
-        // selected ITEM
         this.itemSelect = this.device
-        // this.itemSelect = this.itemSelect.name ? this.itemSelect : this.device
-        // init Sidebar
         this.field = help.getKeyScore(this.itemSelect)
       },
-      symbol () {
-        return help.symbol(this.field)
-      },
+      symbol () { return help.symbol(this.field) },
       indicate (item) {
         const field = this.field
         return field === 'total_exams' ? item[`_${field}`].total : item[`_${field}`].avg
