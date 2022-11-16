@@ -1,9 +1,9 @@
 import help from '../helpers'
-import timeline_9 from './timeline_9.json'
-import timeline_12 from './timeline_12.json'
-import timeline_18 from './timeline_18.json'
-import timeline_19 from './timeline_19.json'
-import timeline_25 from './timeline_25.json'
+// import timeline_9 from './timeline_9.json'
+// import timeline_12 from './timeline_12.json'
+// import timeline_18 from './timeline_18.json'
+// import timeline_19 from './timeline_19.json'
+// import timeline_25 from './timeline_25.json'
 import timeline_27 from './timeline_27.json'
 
 export default {
@@ -13,11 +13,11 @@ export default {
         let dataJson = ''
         // const teste = import.meta.glob('./timeline_9.json')
         // temporary until json deployment
-        if (id == 9 && timeline_9 !== undefined ) dataJson = timeline_9
-        if (id == 12 && timeline_12 !== undefined ) dataJson = timeline_12
-        if (id == 18 && timeline_18 !== undefined ) dataJson = timeline_18
-        if (id == 19 && timeline_19 !== undefined ) dataJson = timeline_19
-        if (id == 25 && timeline_25 !== undefined ) dataJson = timeline_25
+        // if (id == 9 && timeline_9 !== undefined ) dataJson = timeline_9
+        // if (id == 12 && timeline_12 !== undefined ) dataJson = timeline_12
+        // if (id == 18 && timeline_18 !== undefined ) dataJson = timeline_18
+        // if (id == 19 && timeline_19 !== undefined ) dataJson = timeline_19
+        // if (id == 25 && timeline_25 !== undefined ) dataJson = timeline_25
         if (id == 27 && timeline_27 !== undefined ) dataJson = timeline_27
 
         Object.entries(dataJson).forEach(item => {
