@@ -1,10 +1,10 @@
 import help from '../helpers'
 import timeline_9 from './timeline_9.json'
 import timeline_12 from './timeline_12.json'
-import timeline_18 from './timeline_12.json'
-import timeline_19 from './timeline_12.json'
-import timeline_25 from './timeline_12.json'
-import timeline_27 from './timeline_12.json'
+import timeline_18 from './timeline_18.json'
+import timeline_19 from './timeline_19.json'
+import timeline_25 from './timeline_25.json'
+import timeline_27 from './timeline_27.json'
 
 export default {
     // Can be replaced by another method that meets the Json request
