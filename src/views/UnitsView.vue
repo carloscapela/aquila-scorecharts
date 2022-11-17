@@ -128,14 +128,20 @@ export default {
     setClickData (field) { this.field = field },
 
     getDataRadius(valueMax) {
+      let pointRadius = []
       let values = []
       let radius = 3500
-      this.units.map(unit => values.push(unit[`_${this.field}`].max))
+      this.units.map(unit => values.push( this.indicate(unit) ))
       values.sort((a, b) => b - a)
 
       values.map((v, i) => {
-        if(v===valueMax) radius = radius + (150*(i+1))
+        pointRadius.push({index: i, value: v, radius: radius - (150*(i+1))})
       })
+
+      pointRadius.map(item =>
+        radius = item.value === valueMax ? item.radius : radius
+      )
+      // console.log(pointRadius)
 
       return radius
     },
@@ -158,10 +164,12 @@ export default {
               customer: unit.customer_name,
             }}).href
 
-            let radius = this.getDataRadius(unit[`_${this.field}`].max)
+            let radius = this.getDataRadius(
+              this.indicate(unit)
+            )
 
             let strScore =  help.scores(this.field) + ': '  +
-              ('total_exams' === this.field ? unit[`_${this.field}`].total : unit[`_${this.field}`].avg) +
+              this.indicate(unit) +
               help.symbol(this.field)
 
             // JANELA DE CONTEUDO
@@ -248,7 +256,16 @@ export default {
           }) // end LOOPs
         }
       })
-    }
+    },
+
+    indicate (item) {
+      const field = this.field
+      if (field === 'total_exams') return item[`_${field}`].total
+
+      if (field === 'safety_score') return item[`_${field}`].max
+
+      return item[`_${field}`].avg
+    },
   },
 }
 </script>
