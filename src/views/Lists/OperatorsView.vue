@@ -49,7 +49,7 @@
         <div class="card-body p-1" style="z-index: 99; background-color: #FFF;">
           <LineComponent
             :field="field"
-            :main="customer"
+            :main="itemSelect"
           />
           <QuaLineComponent
             v-if="(field === 'qual_score') && itemSelect.name !== customer.name"
