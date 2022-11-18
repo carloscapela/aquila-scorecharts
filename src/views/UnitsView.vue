@@ -253,6 +253,11 @@ export default {
       const f = this.field
       return f==='total_exams' ? 'Production' : help.scores(f)
     },
+
+    indicate (item) {
+      const f = this.field
+      return f==='total_exams' ? help.totalExams(item) : item[`_${f}`].avg
+    },
   },
 }
 </script>

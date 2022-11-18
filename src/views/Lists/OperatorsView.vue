@@ -2,9 +2,7 @@
   <LayoutMain :customer="customer.name">
     <template #header>
       <Header
-        :customer="device.customer_name"
-        :unit="device.unit_name"
-        :device="device.name"
+        :customer="customer.name"
       >
         <DateRanger
           :handle-submit="handleInit"
@@ -17,17 +15,17 @@
     <template #content>
       <div class="card position-relative">
         <div class="device rounded"
-          @click="() => this.itemSelect = device"
-          :class="{ active: itemSelect.name == device.name }"
+          @click="() => this.itemSelect = customer"
+          :class="{ active: itemSelect.name == customer.name }"
         >
         </div>
 
         <div
           class="card-header link-primary pointer mb-4"
           style="z-index: 99;"
-          @click="() => this.itemSelect = device"
+          @click="() => this.itemSelect = customer"
         >
-          Device: {{ device.name }}
+          Customer: {{ customer.name }}
         </div>
 
         <div class="row text-center justify-content-md-center">
@@ -79,7 +77,7 @@
         :callback="(v) => this.setSeries(v)">
         <SelectComponent
           :options="operators"
-          :main="device"
+          :main="customer"
           :callback="(v) => this.itemSelect = v"
           :selected="itemSelect"
         />
