@@ -118,11 +118,6 @@
       devices: state => state.devices,
     }),
     created() {
-
-      console.log(
-        help.GMapCircle('50', '60', 2500)
-      )
-
       this.range.start = moment().subtract(1, 'months').format('YYYY-MM-DD')
       this.range.end = moment().format('YYYY-MM-DD')
       this.handleInit(this.range.start, this.range.end)
