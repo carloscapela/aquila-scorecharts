@@ -38,7 +38,7 @@ const router = createRouter({
     },
     {
       path: '/:customer/list-operators',
-      name: 'ListDevices',
+      name: 'ListOperators',
       component: ListOperatorsView,
     },
     // {

@@ -162,7 +162,7 @@ export default {
             )
 
             let strScore =  this.scoreLabel() + ': '  +
-              ('total_exams' === this.field ? unit[`_${this.field}`].total : unit[`_${this.field}`].avg) +
+              this.indicate(unit) +
               help.symbol(this.field)
 
             // JANELA DE CONTEUDO
@@ -255,8 +255,13 @@ export default {
     },
 
     indicate (item) {
-      const f = this.field
-      return f==='total_exams' ? help.totalExams(item) : item[`_${f}`].avg
+      let f = this.field
+      let str = item[`_${f}`].avg
+
+      if (f === 'total_exams') str = help.totalExams(item)
+      if (f === 'safety_score') str = item[`_${f}`].max
+
+      return str
     },
   },
 }

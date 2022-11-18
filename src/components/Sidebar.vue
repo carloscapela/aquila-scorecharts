@@ -17,6 +17,7 @@
                 :callback="() => this.handleClick(scoreKey)"
                 :active="this.key===scoreKey"
                 :field="scoreKey"
+                :value="scoreKey==='safety_score' ? main[`_${scoreKey}`].max : main[`_${scoreKey}`].avg"
             />
         </div>
     </div>
