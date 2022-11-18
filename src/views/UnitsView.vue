@@ -68,13 +68,10 @@ export default {
   },
   data() {
     return {
-      itemSelect: {}, // *
+      itemSelect: {},
       mapOptions: {},
-      field: '',
-      range: {
-        start: null,
-        end: null,
-      }
+      field: 'total_exams',
+      range: { start: null, end: null }
     }
   },
 
@@ -103,7 +100,6 @@ export default {
       if (this.$route.params.unitName) {
         this.itemSelect = this.units.find(item => item.name == this.$route.params.unitName)
       }
-      this.field = help.getKeyScore(this.itemSelect)
       this.initMap()
       this.setUnitMap()
     },
@@ -123,9 +119,6 @@ export default {
         zoom: 10,
       }
     },
-
-    // Obrigatório para o LineBar
-    setClickData (field) { this.field = field },
 
     getDataRadius(valueMax) {
       let values = []
@@ -160,7 +153,7 @@ export default {
 
             let radius = this.getDataRadius(unit[`_${this.field}`].max)
 
-            let strScore =  help.scores(this.field) + ': '  +
+            let strScore =  this.scoreLabel() + ': '  +
               ('total_exams' === this.field ? unit[`_${this.field}`].total : unit[`_${this.field}`].avg) +
               help.symbol(this.field)
 
@@ -210,8 +203,7 @@ export default {
               fillOpacity: 0.35,
               map,
               center: position,
-              // radius: this.getDataRadius(unit[`_${this.field}`].max).radius,
-              radius: radius,
+              radius,
             })
 
             infoWindow.addListener('closeclick', () => {
@@ -240,7 +232,6 @@ export default {
                 fillColor: '#ff0000',
               })
               vm.itemSelect = infoWindow.unit
-              vm.setClickData(this.field)
 
               infoWindow.setPosition(ev.latLng)
               infoWindow.open(map)
@@ -248,7 +239,12 @@ export default {
           }) // end LOOPs
         }
       })
-    }
+    },
+
+    scoreLabel () {
+      const f = this.field
+      return f==='total_exams' ? 'Production' : help.scores(f)
+    },
   },
 }
 </script>

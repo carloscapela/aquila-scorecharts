@@ -19,12 +19,14 @@
         <div class="device rounded"
           @click="() => this.itemSelect = device"
           :class="{ active: itemSelect.name == device.name }"
-        ></div>
+        >
+        </div>
 
         <div
           class="card-header link-primary pointer mb-4"
           style="z-index: 99;"
-          @click="() => this.itemSelect = device">
+          @click="() => this.itemSelect = device"
+        >
           Device: {{ device.name }}
         </div>
 
@@ -46,16 +48,19 @@
           </div>
         </div>
 
-        <div class="card-body" style="z-index: 99; background-color: #FFF;">
-          <LineComponent
-            v-if="itemSelect.name !== device.name"
-            :field="field"
-            :main="itemSelect"
-          />
+        <div class="card-body p-1" style="z-index: 99; background-color: #FFF;">
+          <!--Line to  DEVICE-->
           <LineBarComponent
             v-if="itemSelect.name === device.name"
             :field="field"
             :main="itemSelect"
+          />
+          <!--Line to OPERATOR-->
+          <LineComponent
+            v-if="itemSelect.name !== device.name"
+            :field="field"
+            :main="itemSelect"
+            :options="options"
           />
           <QuaLineComponent
             v-if="(field === 'qual_score') && itemSelect.name !== device.name"
@@ -71,7 +76,7 @@
       <SidebarComponent
         :main="itemSelect"
         :field="field"
-        :callback="(v) => this.field = v">
+        :callback="(v) => this.setSeries(v)">
         <SelectComponent
           :options="operators"
           :main="device"
@@ -86,15 +91,15 @@
 
 <script>
   import moment from 'moment'
-  import help from '../helpers'
-  import Header from '../components/Header.vue'
-  import DateRanger from '../components/DateRanger.vue'
-  import LayoutMain from '../layouts/Main.vue'
-  import SidebarComponent from '../components/Sidebar.vue'
-  import LineComponent from '../components/LineFooter.vue'
-  import SelectComponent from '../components/Select.vue'
-  import LineBarComponent from '../components/LineBarFooter.vue'
-  import QuaLineComponent from '../components/QuaLineFooter.vue'
+  import help from '../../helpers'
+  import Header from '../../components/Header.vue'
+  import DateRanger from '../../components/DateRanger.vue'
+  import LayoutMain from '../../layouts/Main.vue'
+  import SidebarComponent from '../../components/Sidebar.vue'
+  import LineComponent from '../../components/LineFooter.vue'
+  import SelectComponent from '../../components/Select.vue'
+  import LineBarComponent from '../../components/LineBarFooter.vue'
+  import QuaLineComponent from '../../components/QuaLineFooter.vue'
   import { mapState } from 'vuex'
 
   export default {
@@ -110,12 +115,10 @@
     },
     data() {
       return {
-        field: '',
+        field: 'total_exams',
         itemSelect: {},
-        range: {
-          start: null,
-          end: null,
-        }
+        range: { start: null, end: null },
+        options: [],
       }
     },
     created() {
@@ -124,16 +127,9 @@
       this.handleInit(this.range.start, this.range.end)
     },
     computed: mapState({
-      devices: state => state.devices,
-      operatorsStore: state => state.operators,
-      operators () {
-        const operators = this.operatorsStore.filter(m => m.operator_name.includes(this.device.name))
-        operators.sort((a, b) =>  b[this.getField].max-a[this.getField].max)
-        return operators
-      },
-      device () {
-        return this.devices.find(d => d.name == this.$route.params.deviceName)
-      },
+      customer: state => state.customer,
+      operators: state => state.operators,
+      device: state => state.main,
       operatorParams () {
         return {
           customer: this.itemSelect.customer_name,
@@ -141,25 +137,53 @@
           deviceName: this.device.name,
         }
       },
-      getField () {
-        return `_${this.field}`
-      },
+      getField () { return `_${this.field}` },
     }),
     methods: {
       handleInit (start='', end='') {
+        // Main Store
         this.$store.dispatch('fetch', { name: this.$route.params.customer, start, end })
-        // selected ITEM
+        this.$store.dispatch('find', {name: this.$route.params.deviceName, type: 'Device:' })
+        var deviceName = this.device.name
+        // Get Operators
+        this.$store.dispatch('fetchOperators', {
+          name: this.$route.params.customer,
+          start,
+          end,
+          // Filter Complex
+          callback: function (dataJson) {
+            return dataJson.filter(item => {
+              if (item.type==='Operator:') {
+                return item.operator_name === deviceName
+              }
+
+              return item
+            })
+          }
+        })
+
+        // Order
+        this.operators.sort((a, b) =>  b[this.getField].max-a[this.getField].max)
+
         this.itemSelect = this.device
-        // this.itemSelect = this.itemSelect.name ? this.itemSelect : this.device
-        // init Sidebar
-        this.field = help.getKeyScore(this.itemSelect)
       },
-      symbol () {
-        return help.symbol(this.field)
+
+      setSeries (field) {
+        let keys = []
+        this.field = field
+
+        this.itemSelect.operator_name.map((name, i) => {
+          if (name === this.device.name) keys.push(i)
+        })
+
+        this.options = this.itemSelect[field].filter((value, i) => keys.includes(i)===i)
       },
+
+      symbol () { return help.symbol(this.field) },
+
       indicate (item) {
-        const field = this.field
-        return field === 'total_exams' ? item[`_${field}`].total : item[`_${field}`].avg
+        const f = this.field
+        return f==='total_exams' ? help.totalExams(item) : item[`_${f}`].avg
       },
     },
   }

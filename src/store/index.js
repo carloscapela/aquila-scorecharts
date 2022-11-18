@@ -19,7 +19,7 @@ export default createStore({
         //     start: String,
         //     end: String,
         // }
-        fetch({ commit, dispatch }, { name, start, end}) {
+        fetch({ commit, dispatch }, { name, start, end }) {
             try {
                 const customerId = Number(name)
 
@@ -29,8 +29,6 @@ export default createStore({
 
                 dispatch('fetchCustomer', customerId)
                 dispatch('fetchUnits', customerId)
-                dispatch('fetchDevices', customerId)
-                dispatch('fetchOperators', customerId)
             }
             catch (error) { console.log(error) }
         },
@@ -55,28 +53,47 @@ export default createStore({
             commit('SET_UNITS', resp)
         },
 
-        fetchDevices({ commit }, name) {
+        // payload: {
+        //     name: Number || String, # customer_name
+        //     unitName: String,
+        // }
+        fetchDevices({ commit }, payload) {
             const data = this.state.data
 
-            const resp = data.filter(item =>
-                item.type === 'Device:' && Number(item.customer_name) === name
-            )
+            const resp = data.filter(item => {
+                if (item.type === 'Device:' && Number(item.customer_name) === Number(payload.name)) {
+                    // filter to UNIT
+                    if (payload.unitName) {
+                        return payload.unitName === item.unit_name
+                    }
+
+                    return item
+                }
+            })
 
             commit('SET_DEVICES', resp)
         },
 
-        fetchOperators({ commit }, name) {
-            const data = this.state.data
+        // payload: {
+        //     name: Number || String, # customer_name
+        //     start: String,
+        //     end: String,
+        //     callback: Function
+        // }
+        fetchOperators({ commit }, { name, start, end, callback }) {
+            const customerId = Number(name)
+
+            const data = db.toObj(customerId, start, end, (callback ? callback : null))
 
             const resp = data.filter(item =>
-                item.type === 'Operator:' && Number(item.customer_name) === name
+                item.type === 'Operator:' && Number(item.customer_name) === customerId
             )
 
             commit('SET_OPERATORS', resp)
         },
 
         // payload: {
-        //     name: Number | String,
+        //     name: Number || String,
         //     type: String,
         // }
         find({ commit }, { name, type }) {

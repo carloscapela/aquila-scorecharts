@@ -15,6 +15,11 @@ export default {
     props: {
         field: String,
         main: {},
+        options: {
+            type: Array,
+            required: false,
+            default: [],
+        },
     },
     data() {
         return {
@@ -27,11 +32,21 @@ export default {
         this.formatDate()
         this.handleInit()
     },
+    computed: {
+        scoreLabel () {
+            return this.field === 'total_exams'
+                ? 'Production'
+                : h.scores(this.field)
+        }
+    },
     methods: {
         getYaxis() {
-            const is_avg = this.field === 'avg_exam_duration'
+            let str = 'Percentage'
+            if (this.field==='avg_exam_duration') str = 'Time'
+            if (this.field==='total_exams') str = 'Totalizer'
+
             return {
-                title: { text: is_avg ? 'Time' : 'Percentage' },
+                title: { text: str },
                 min: 0,
                 max: this.main[`_${this.field}`].max,
             }
@@ -45,7 +60,7 @@ export default {
         handleInit() {
             this.series = [{
                 name: h.scores(this.field),
-                data: this.main[this.field],
+                data: this.options.length ? this.options : this.main[this.field],
             }]
 
             this.chartOptions = {
@@ -87,13 +102,13 @@ export default {
                 },
                 legend: {
                     position: 'top',
-                    horizontalAlign: 'right',
+                    horizontalAlign: 'center',
                     floating: true,
                     offsetY: -25,
                     offsetX: -5,
                 },
                 title: {
-                    text: `${this.main.name} - ${h.scores(this.field)}`,
+                    text: `${this.main.name} - ${this.scoreLabel}`,
                     align: 'left'
                 },
             }

@@ -7,8 +7,9 @@ import timeline_18 from './timeline_18.json'
 import timeline_27 from './timeline_27.json'
 
 export default {
+
     // Can be replaced by another method that meets the Json request
-    toObj(id, start='', end='') {
+    toObj(id, start='', end='', filterCallback = null) {
         let data = []
         let dataJson = ''
         // const teste = import.meta.glob('./timeline_9.json')
@@ -34,7 +35,7 @@ export default {
         })
 
         // preparing data
-        data = this.toJson(data, start, end)
+        data = this.toJson(data, start, end, filterCallback)
 
         return data
     },
@@ -82,9 +83,12 @@ export default {
     // avg_grade: Array,
     // study_description: Array,
     // n_images: Array,
-    toJson (dataJson, start='', end='') {
+    toJson (dataJson, start='', end='', filterCallback = null) {
         const data = []
-        // let dataJson = this.toObj(id)
+
+        // filtercallback
+        if (filterCallback) dataJson = filterCallback(dataJson)
+
         // Merge register
         dataJson.map(item => {
             // test key name
@@ -138,6 +142,7 @@ export default {
                 })
             }
         })
+
         // Filter to Date
         if (start && end) {
             dataJson = dataJson.filter(item => help.is_between(item.study_date, start, end))

@@ -1,31 +1,39 @@
 <template>
     <div v-if="isValid()" class="card shadow-sm border mb-2 pointer" :class="{ 'text-primary border border-primary' : active }">
         <div class="card-body row m-0 p-2">
-            <div class="col-6">
+            <div class="col-sm-12 col-md-6 col-lg-6">
                 <div class="stretched-link" @click="callback()">
                     <h5>{{ title }}</h5>
-                    <h2>
-                        {{ options[value] }} {{ strfix }}
+                    <!-- IF not value -->
+                    <h3 v-if="!value">
+                        {{ options.avg }}{{ this.symbol(field) }}
                         <span v-if="help">
                             <i class="bi bi-question-circle"></i>
                         </span>
-                    </h2>
+                    </h3>
+
+                    <h3 v-if="value">
+                        {{ value }}{{ this.symbol(field) }}
+                        <span v-if="help">
+                            <i class="bi bi-question-circle"></i>
+                        </span>
+                    </h3>
                 </div>
             </div>
-            <div  class="col-6">
-                <div class="row text-center">
+            <div  class="col-sm-12 col-md-6 col-lg-6">
+                <div class="row text-center p-0">
                     <div class="col-6">
-                        <p>{{ valueMin }}</p>
+                        <p>MIN</p>
                         <div class="badge rounded-pill bg-danger text-danger bg-opacity-25">
-                            <i class="bi bi-caret-down-fill"></i>
-                            {{ options[valueMin] }} {{ strfix }}
+                            {{ valueMin ? valueMin : options.min }}
+                            {{ this.symbol(field) }}
                         </div>
                     </div>
                     <div class="col-6">
-                        <p>{{ valueMax }}</p>
+                        <p>MAX</p>
                         <div class="badge rounded-pill bg-success text-success bg-opacity-25">
-                            <i class="bi bi-caret-up-fill"></i>
-                            {{ options[valueMax] }} {{ strfix }}
+                            {{ valueMax ? valueMax : options.max }}
+                            {{ this.symbol(field) }}
                         </div>
                     </div>
                 </div>
@@ -35,10 +43,12 @@
 </template>
 
 <script>
+import help from '../helpers'
 export default {
     props: {
         title: String,
         options: Object,
+        field: String,
         callback: {
             type: Function,
             required: false,
@@ -52,28 +62,15 @@ export default {
             required: false,
             default: false,
         },
-        strfix: {
-            type: String,
-            default: '%',
-        },
-        value: {
-            type: String,
-            default: 'avg',
-        },
-        valueMin: {
-            type: String,
-            default: 'min',
-        },
-        valueMax: {
-            type: String,
-            default: 'max',
-        },
+        value: 0,
+        valueMin: 0,
+        valueMax: 0,
     },
 
     methods: {
-        isValid() {
-            return this.options.min || this.options.avg || this.options.max
-        },
+        isValid() { return this.options.avg },
+
+        symbol (key) { return help.symbol(key) },
     },
 }
 </script>

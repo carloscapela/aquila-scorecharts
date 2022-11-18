@@ -21,9 +21,13 @@ import h from '../helpers'
 
 export default {
     props: {
-        // options: Array,
         field: String,
         main: {},
+        options: {
+            type: Array,
+            required: false,
+            default: [],
+        },
     },
     data() {
         return {
@@ -50,9 +54,12 @@ export default {
     },
     methods: {
         getYaxis() {
-            const is_avg = this.field === 'avg_exam_duration'
+            let str = 'Percentage'
+            if (this.field==='avg_exam_duration') str = 'Time'
+            if (this.field==='total_exams') str = 'Totalizer'
+
             return {
-                title: { text: is_avg ? 'Time' : 'Percentage' },
+                title: { text: str },
                 min: 0,
                 max: this.main[`_${this.field}`].max,
             }
@@ -66,7 +73,7 @@ export default {
         handleInit() {
             this.series = [{
                 name: h.scores(this.field),
-                data: this.main[this.field],
+                data: this.options.length ? this.options : this.main[this.field],
             }]
 
             this.chartOptions = {
@@ -195,14 +202,6 @@ export default {
             dates.filter((d, i) => {
                 if (moment(d).isSame(dateSelected)) {
                     operatorDurations.push(this.main.exam_real_duration[i])
-                    // operatorDurations.push({
-                    //     y: this.main.exam_real_duration[i],
-                    //     // x: this.main.start_time[i],
-                    //     x: [
-                    //         this.main.start_time[i],
-                    //         this.main.operator_name[i],
-                    //     ],
-                    // })
                     timeCategories.push([
                         this.main.start_time[i],
                         this.main.operator_name[i]

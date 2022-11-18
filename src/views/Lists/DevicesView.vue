@@ -15,29 +15,18 @@
     <template #content>
       <div class="card position-relative">
 
-        <!-- <div class="unit rounded"
-          @click="() => this.itemSelect = unit"
-          :class="{ active: itemSelect.name == unit.name }"
-        ></div> -->
-
         <div class="unit rounded"
           @click="() => this.itemSelect = customer"
           :class="{ active: itemSelect.name == customer.name }"
-        ></div>
+        >
+        </div>
 
-        <!-- <div
-            class="card-header link-primary pointer mb-4"
-            style="z-index: 99;"
-            @click="() => this.itemSelect = unit"
-          >
-            Unit: {{ itemSelect.unit_name }}
-        </div> -->
         <div
-            class="card-header link-primary pointer mb-4"
-            style="z-index: 99;"
-            @click="() => this.itemSelect = customer"
-          >
-            Customer: {{ itemSelect.name }}
+          class="card-header link-primary pointer mb-4"
+          style="z-index: 99;"
+          @click="() => this.itemSelect = customer"
+        >
+          Customer: {{ customer.name }}
         </div>
 
         <div class="row text-center justify-content-md-center">
@@ -45,7 +34,8 @@
             <div
               class="item position-relative shadow"
               :class="{ active: itemSelect.name == m.name }"
-              @click="() => this.itemSelect = m">
+              @click="() => this.itemSelect = m"
+            >
               <div class="position-absolute top-0 start-50 translate-middle badge rounded-pill badge text-bg-light">
                 Device: {{ m.name }}
               </div>
@@ -54,15 +44,11 @@
                 {{ this.symbol() }}
               </h2>
               <img src="@/assets/mammography.png" alt="Devices" width="110" />
-              <!-- <br>
-              <router-link :to="{ name: 'operators', params: operatorParams(m.name) }">
-                Operators
-              </router-link> -->
             </div>
           </div>
         </div>
 
-        <div class="card-body" style="z-index: 99; background-color: #FFF;">
+        <div class="card-body p-2" style="z-index: 99; background-color: #FFF;">
           <LineComponent
             v-if="itemSelect.name === this.customer.name"
             :field="field"
@@ -81,9 +67,8 @@
       <SidebarComponent
         :main="itemSelect"
         :field="field"
-        :callback="(v) => {
-          this.field = v
-        }">
+        :callback="(v) => this.field = v"
+      >
         <SelectComponent
           :options="devices"
           :main="customer"
@@ -123,19 +108,14 @@
     },
     data() {
       return {
-        // devices: [],
         itemSelect: {},
-        field: '',
-        range: {
-          start: null,
-          end: null,
-        }
+        field: 'total_exams',
+        range: { start: null, end: null }
       }
     },
     computed: mapState({
       customer: state => state.customer,
       devices: state => state.devices,
-      // unit: state => state.main,
     }),
     created() {
       this.range.start = moment().subtract(1, 'months').format('YYYY-MM-DD')
@@ -150,9 +130,6 @@
           start,
           end,
         })
-        // this.$store.dispatch('find', {name: this.$route.params.unitName, type: 'Unit:' })
-
-        // this.devices = this.devicesCutomer.filter(item => item.unit_name==this.$route.params.unitName)
 
         // Order
         this.devices.sort((a, b) =>
@@ -160,24 +137,13 @@
         )
 
         this.itemSelect = this.customer
-        this.field = help.getKeyScore(this.itemSelect)
       },
 
-      // operatorParams (deviceName = '') {
-      //   return {
-      //     customer: this.itemSelect.customer_name,
-      //     unitName: this.itemSelect.unit_name,
-      //     deviceName: deviceName,
-      //   }
-      // },
-
-      symbol () {
-        return help.symbol(this.field)
-      },
+      symbol () { return help.symbol(this.field) },
 
       indicate (item) {
-        const field = this.field
-        return field === 'total_exams' ? item[`_${field}`].total : item[`_${field}`].avg
+        const f = this.field
+        return f=== 'total_exams' ? help.totalExams(item) : item[`_${f}`].avg
       },
     },
   }

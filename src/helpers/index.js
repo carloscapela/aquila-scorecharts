@@ -21,7 +21,8 @@ const QUALITIES = {
     symmetry_right_images: 'Right PNL MLO/CC',
 }
 const SCORES = {
-    total_exams: 'Production',
+    // Removido devido as particularidades
+    // total_exams: 'Production',
     general_score: 'General Score',
     qual_score: 'Quality Score',
     avg_exam_duration: 'AVG Time',
@@ -82,8 +83,8 @@ export default {
     },
 
     // Return format MMM DD YYYY
-    dateFormat(dns) {
-        let value = dns.replace('T00:00:00.000Z', '')
+    dateFormat(dsn) {
+        let value = dsn.replace('T00:00:00.000Z', '')
         return moment(value).format('MMM DD YYYY')
     },
     // Numbers
@@ -131,5 +132,26 @@ export default {
             avg: this.avgFloat(array),
             total: this.sum(array),
         }
+    },
+    // Devido a repetição de valores do total de exames
+    // Tornou-se necessário a concatenação de dados por DATA
+    totalExams(main) {
+        let search = []
+        let exames = []
+        main.study_date.map((data, index) => {
+            var values = {
+                study_date: data,
+                total_exams: main.total_exams[index],
+            }
+            var k = search.findIndex(d => d.study_date === data)
+
+            if (k < 0) {
+                search.push(values)
+                exames.push(values.total_exams)
+            }
+        })
+
+
+       return exames.length ? this.sum(exames) : 0
     },
 }

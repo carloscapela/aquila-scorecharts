@@ -16,7 +16,6 @@
 </template>
 
 <script>
-// import moment from 'moment'
 import help from '../helpers'
 
 export default {
@@ -43,6 +42,7 @@ export default {
         this.handleInit()
         this.handleOptions()
     },
+
     methods: {
         handleInit() {
             // Inicialize options
@@ -91,9 +91,12 @@ export default {
             const media = []
             // if no value is selected
             if (!this.inputs.length) {
+
                 for (let k in this.qualities) media.push( Number(help.avg(this.main[k])) )
+
                 let valueMin = help.min(media)
                 let valueMax = help.max(media)
+
                 for (let k in this.qualities) {
                     let value = Number(help.avg(this.main[k]))
                     if (value === valueMin) {

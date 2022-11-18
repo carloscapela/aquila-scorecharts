@@ -42,9 +42,6 @@
                 {{ this.indicate(m) }}
                 {{ this.symbol() }}
               </h2>
-              <!-- <pre>
-                {{ m.total_exams }}
-              </pre> -->
               <img src="@/assets/mammography.png" alt="Devices" width="110" />
               <br>
               <router-link :to="{ name: 'operators', params: operatorParams(m.name) }">
@@ -73,9 +70,8 @@
       <SidebarComponent
         :main="itemSelect"
         :field="field"
-        :callback="(v) => {
-          this.field = v
-        }">
+        :callback="(v) => this.field = v"
+      >
         <SelectComponent
           :options="devices"
           :main="unit"
@@ -115,18 +111,16 @@
     },
     data() {
       return {
-        devices: [],
+        // devices: [],
         itemSelect: {},
-        field: '',
-        range: {
-          start: null,
-          end: null,
-        }
+        field: 'total_exams',
+        range: { start: null, end: null }
       }
     },
     computed: mapState({
       customer: state => state.customer,
-      devicesCutomer: state => state.devices,
+      // devicesCutomer: state => state.devices,
+      devices: state => state.devices,
       unit: state => state.main,
     }),
     created() {
@@ -141,14 +135,18 @@
           start,
           end,
         })
+        this.$store.dispatch('fetchDevices', {
+          name: this.$route.params.customer,
+          unitName: this.$route.params.unitName,
+        })
         this.$store.dispatch('find', {name: this.$route.params.unitName, type: 'Unit:' })
-        this.devices = this.devicesCutomer.filter(item => item.unit_name==this.$route.params.unitName)
+
+        // this.devices = this.devicesCutomer.filter(item => item.unit_name==this.$route.params.unitName)
         // Order
         this.devices.sort((a, b) =>
           b[`_${help.getKeyScore(a)}`].max - a[`_${help.getKeyScore(a)}`].max
         )
         this.itemSelect = this.unit
-        this.field = help.getKeyScore(this.itemSelect)
       },
 
       operatorParams (deviceName = '') {
@@ -162,8 +160,8 @@
       symbol () { return help.symbol(this.field) },
 
       indicate (item) {
-        const field = this.field
-        return field === 'total_exams' ? item[`_${field}`].total : item[`_${field}`].avg
+        const f = this.field
+        return f=== 'total_exams' ? help.totalExams(item) : item[`_${f}`].avg
       },
     },
   }

@@ -6,13 +6,6 @@
         <i class="bi bi-list"></i>
       </button>
 
-      <!-- <router-link
-        v-if="customer"
-        :to="{ name: 'customer', params: { customer: customer } }"
-        class="navbar-brand">
-        Customer {{ customer }}
-      </router-link> -->
-
       <span
         v-if="customer"
         class="navbar-brand">
@@ -72,12 +65,10 @@ export default {
       type: Number,
       required: false,
     },
-
     unit: {
       type: String,
       required: false,
     },
-
     device: {
       type: String,
       required: false,

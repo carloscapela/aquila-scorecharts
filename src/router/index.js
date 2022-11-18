@@ -5,6 +5,7 @@ import DevicesView from '../views/DevicesView.vue'
 import OperatorsView from '../views/OperatorsView.vue'
 // lists
 import ListDevicesView from '../views/Lists/DevicesView.vue'
+import ListOperatorsView from '../views/Lists/OperatorsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,6 +35,11 @@ const router = createRouter({
       path: '/:customer/list-devices',
       name: 'ListDevices',
       component: ListDevicesView,
+    },
+    {
+      path: '/:customer/list-operators',
+      name: 'ListDevices',
+      component: ListOperatorsView,
     },
     // {
     //   path: '/:customer/unit/:unitName/devices/:deviceName/xy',

@@ -3,13 +3,20 @@
         <slot></slot>
         <div class="list-group" v-if="main">
             <IndicatorComponent
+                title="Production"
+                :options="main._total_exams"
+                :callback="() => this.handleClick('total_exams')"
+                :active="this.key==='total_exams'"
+                :value="this.totalExams(main)"
+                field="total_exams"
+            />
+            <IndicatorComponent
                 v-for="(label, scoreKey) in scores"
                 :title="label"
                 :options="main[`_${scoreKey}`]"
                 :callback="() => this.handleClick(scoreKey)"
                 :active="this.key===scoreKey"
-                :strfix="this.symbol(scoreKey)"
-                :value="scoreKey==='total_exams'?'total':'avg'"
+                :field="scoreKey"
             />
         </div>
     </div>
@@ -18,7 +25,6 @@
 <script>
 import IndicatorComponent from './Indicator.vue'
 import help from '../helpers'
-
 export default {
     props: {
         main: Object,
@@ -44,6 +50,10 @@ export default {
         symbol (key) {
             return help.symbol(key)
         },
+
+        totalExams(main){
+            return help.totalExams(main)
+        }
     },
     setup () {
         return { scores: help.scores() }
