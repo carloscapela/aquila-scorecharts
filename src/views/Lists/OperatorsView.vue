@@ -47,34 +47,24 @@
         </div>
 
         <div class="card-body p-1" style="z-index: 99; background-color: #FFF;">
-          <!--Line to  DEVICE-->
-          <LineBarComponent
-            v-if="itemSelect.name === device.name"
-            :field="field"
-            :main="itemSelect"
-          />
-          <!--Line to OPERATOR-->
           <LineComponent
-            v-if="itemSelect.name !== device.name"
             :field="field"
-            :main="itemSelect"
-            :options="options"
+            :main="customer"
           />
           <QuaLineComponent
-            v-if="(field === 'qual_score') && itemSelect.name !== device.name"
+            v-if="(field === 'qual_score') && itemSelect.name !== customer.name"
             :field="field"
             :main="itemSelect"
           />
         </div>
       </div>
-
     </template>
 
     <template #sidebar>
       <SidebarComponent
         :main="itemSelect"
         :field="field"
-        :callback="(v) => this.setSeries(v)">
+        :callback="(v) => this.field = v">
         <SelectComponent
           :options="operators"
           :main="customer"
@@ -96,7 +86,6 @@
   import SidebarComponent from '../../components/Sidebar.vue'
   import LineComponent from '../../components/LineFooter.vue'
   import SelectComponent from '../../components/Select.vue'
-  import LineBarComponent from '../../components/LineBarFooter.vue'
   import QuaLineComponent from '../../components/QuaLineFooter.vue'
   import { mapState } from 'vuex'
 
@@ -108,7 +97,6 @@
       Header,
       DateRanger,
       SelectComponent,
-      LineBarComponent,
       QuaLineComponent,
     },
     data() {
@@ -127,7 +115,7 @@
     computed: mapState({
       customer: state => state.customer,
       operators: state => state.operators,
-      device: state => state.main,
+      // device: state => state.main,
       operatorParams () {
         return {
           customer: this.itemSelect.customer_name,
@@ -141,47 +129,29 @@
       handleInit (start='', end='') {
         // Main Store
         this.$store.dispatch('fetch', { name: this.$route.params.customer, start, end })
-        this.$store.dispatch('find', {name: this.$route.params.deviceName, type: 'Device:' })
-        var deviceName = this.device.name
-        // Get Operators
+
         this.$store.dispatch('fetchOperators', {
           name: this.$route.params.customer,
           start,
           end,
-          // Filter Complex
-          callback: function (dataJson) {
-            return dataJson.filter(item => {
-              if (item.type==='Operator:') {
-                return item.operator_name === deviceName
-              }
-
-              return item
-            })
-          }
         })
 
         // Order
         this.operators.sort((a, b) =>  b[this.getField].max-a[this.getField].max)
 
-        this.itemSelect = this.device
-      },
-
-      setSeries (field) {
-        let keys = []
-        this.field = field
-
-        this.itemSelect.operator_name.map((name, i) => {
-          if (name === this.device.name) keys.push(i)
-        })
-
-        this.options = this.itemSelect[field].filter((value, i) => keys.includes(i)===i)
+        this.itemSelect = this.customer
       },
 
       symbol () { return help.symbol(this.field) },
 
       indicate (item) {
-        const f = this.field
-        return f==='total_exams' ? help.totalExams(item) : item[`_${f}`].avg
+        let f = this.field
+        let str = item[`_${f}`].avg
+
+        if (f === 'total_exams') str = help.totalExams(item)
+        if (f === 'safety_score') str = item[`_${f}`].max
+
+        return str
       },
     },
   }

@@ -131,6 +131,10 @@
           end,
         })
 
+        this.$store.dispatch('fetchDevices', {
+          name: this.$route.params.customer,
+        })
+
         // Order
         this.devices.sort((a, b) =>
           b[`_${help.getKeyScore(a)}`].max - a[`_${help.getKeyScore(a)}`].max

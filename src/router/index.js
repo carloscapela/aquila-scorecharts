@@ -41,11 +41,6 @@ const router = createRouter({
       name: 'ListOperators',
       component: ListOperatorsView,
     },
-    // {
-    //   path: '/:customer/unit/:unitName/devices/:deviceName/xy',
-    //   name: 'OperatorXY',
-    //   component: OperatorGridView,
-    // },
   ]
 })
 

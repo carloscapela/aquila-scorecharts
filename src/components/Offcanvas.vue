@@ -22,16 +22,21 @@
               <router-link
                 v-if="customer"
                 :to="{ name: 'ListDevices', params: { customer: customer } }"
-                class="nav-link">
+                class="nav-link"
+              >
                 <i class="bi bi-house-heart"></i>
                 Devices
               </router-link>
             </li>
             <li class="nav-item">
-                <a class="nav-link disabled" href="#">
-                  <i class="bi bi-people"></i>
-                  Operators
-                </a>
+              <router-link
+                v-if="customer"
+                :to="{ name: 'ListOperators', params: { customer: customer } }"
+                class="nav-link"
+              >
+                <i class="bi bi-people"></i>
+                Operators
+              </router-link>
             </li>
             <li class="nav-item">
                 <a class="nav-link disabled">

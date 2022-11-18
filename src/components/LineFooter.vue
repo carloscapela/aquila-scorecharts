@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="this.main">
         <apexchart
             type="area"
             height="300"
@@ -29,8 +29,10 @@ export default {
         }
     },
     created() {
-        this.formatDate()
-        this.handleInit()
+        if (this.main) {
+            this.formatDate()
+            this.handleInit()
+        }
     },
     computed: {
         scoreLabel () {
@@ -54,7 +56,9 @@ export default {
         // convert date & time
         formatDate() {
             const dt = []
-            this.main.study_date.map(d => dt.push(h.dateFormat(d)))
+            if (this.main) {
+                this.main.study_date.map(d => dt.push(h.dateFormat(d)))
+            }
             this.dates = dt
         },
         handleInit() {
