@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import UnitsView from '../views/UnitsView.vue'
 import DevicesView from '../views/DevicesView.vue'
 import OperatorsView from '../views/OperatorsView.vue'
+import GridView from '../views/GridView.vue'
 // lists
 import ListDevicesView from '../views/Lists/DevicesView.vue'
 import ListOperatorsView from '../views/Lists/OperatorsView.vue'
@@ -19,6 +20,11 @@ const router = createRouter({
       path: '/:customer/:unitName?',
       name: 'customer',
       component: UnitsView,
+    },
+    {
+      path: '/:customer/grid',
+      name: 'grid',
+      component: GridView,
     },
     {
       path: '/:customer/unit/:unitName/devices',
