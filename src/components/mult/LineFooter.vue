@@ -11,7 +11,7 @@
 
 <script>
 import moment from 'moment'
-import h from '../../helpers'
+import help from '../../helpers'
 
 export default {
     props: {
@@ -42,13 +42,13 @@ export default {
             const data = []
             if (this.fieldX) {
                 data.push({
-                    name: h.scores(this.fieldX),
+                    name: help.scores(this.fieldX),
                     data: this.main[this.fieldX],
                 })
             }
             if (this.fieldY) {
                 data.push({
-                    name: h.scores(this.fieldY),
+                    name: help.scores(this.fieldY),
                     data: this.main[this.fieldY],
                 })
             }
@@ -87,11 +87,7 @@ export default {
                     title: { text: 'Dates' },
                     type: 'datetime',
                 },
-                yaxis: {
-                    title: { text: 'Percentage' },
-                    min: 0,
-                    max: 100,
-                },
+                yaxis: this.getYaxis(),
                 markers: {
                     size: 1
                 },
@@ -106,6 +102,18 @@ export default {
                     text: `${this.main.name}`,
                     align: 'left'
                 },
+            }
+        },
+
+        getYaxis () {
+            let str = 'Percentage'
+            if (this.fieldY==='avg_exam_duration') str = 'Time'
+            if (this.fieldY==='total_exams') str = 'Totalizer'
+
+            return {
+                title: { text: str },
+                min: 0,
+                max: this.main[`_${this.fieldY}`].max,
             }
         },
     },

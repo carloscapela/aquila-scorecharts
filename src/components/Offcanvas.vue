@@ -10,13 +10,21 @@
     <div class="offcanvas-body">
         <ul class="nav flex-column">
             <li class="nav-item">
-              <router-link
+              <a
+                class="nav-link"
+                :href="`/${customer}`"
+                v-if="customer"
+              >
+                <i class="bi bi-house"></i>
+                Units
+              </a>
+              <!-- <router-link
                 v-if="customer"
                 :to="{ name: 'customer', params: { customer: customer } }"
-                class="nav-link">
+                >
                   <i class="bi bi-house"></i>
                   Units
-              </router-link>
+              </router-link> -->
             </li>
             <li class="nav-item">
               <router-link
@@ -39,10 +47,14 @@
               </router-link>
             </li>
             <li class="nav-item">
-                <a class="nav-link disabled">
-                  <i class="bi bi-graph-up-arrow"></i>
-                  Chart XY
-                </a>
+              <router-link
+                v-if="customer"
+                :to="{ name: 'grid', params: { customer: customer } }"
+                class="nav-link disabled"
+              >
+                <i class="bi bi-graph-up-arrow"></i>
+                Chart XY
+              </router-link>
             </li>
         </ul>
         <!-- <p>Try scrolling the rest of the page to see this option in action.</p> -->

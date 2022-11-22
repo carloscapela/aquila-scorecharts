@@ -15,7 +15,12 @@
             >
                 <i class="bi bi-trash"></i>
             </button>
-            <input type="text" class="form-control border-secondary" :value="titleX || 'Score X'" disabled>
+            <input
+                type="text"
+                class="form-control border-secondary"
+                :value="titleX || 'Score X'"
+                disabled
+            />
         </div>
 
         <div class="input-group mb-2">
@@ -31,18 +36,29 @@
             >
                 <i class="bi bi-trash"></i>
             </button>
-            <input type="text" class="form-control border-warning" :value="titleY || 'Score Y'" disabled>
+            <input
+                type="text"
+                class="form-control border-warning"
+                :value="titleY || 'Score Y'"
+                disabled
+            >
         </div>
     </div>
-    <!-- <div class="list-group" v-if="main"> -->
+    <IndicatorComponent
+        title="Production"
+        :options="main._total_exams"
+        :callback="() => this.handleClick('total_exams')"
+        :active="getClassActive('total_exams')"
+        :value="this.totalExams(main)"
+        field="total_exams"
+    />
     <IndicatorComponent
         v-for="(label, scoreKey) in scores"
         :title="label"
         :options="main[`_${scoreKey}`]"
         :callback="() => this.handleClick(scoreKey)"
-        :active="key===scoreKey"
+        :active="getClassActive(scoreKey)"
     />
-    <!-- </div> -->
 </div>
 <!-- <div>
     <slot></slot>
@@ -217,9 +233,8 @@
 </template>
 
 <script>
-import h from '../../helpers'
+import help from '../../helpers'
 import IndicatorComponent from '../Indicator.vue'
-// import {labels} from '../../helpers/util'
 export default {
     props: {
         main: Object,
@@ -238,37 +253,37 @@ export default {
         }
     },
     methods: {
-        handleClick(field, key){
+        handleClick(field){
             if (!this.x && !this.y) {
                 this.x = field
-                this.titleX = labels(field)
+                this.titleX = this.getLable(field)
                 this.callbackX(field)
             } else if (this.x && !this.y) {
                 this.y = field
-                this.titleY = labels(field)
+                this.titleY = this.getLable(field)
                 this.callbackY(field)
             } else if (this.x && this.y) {
                 this.y = field
-                this.titleY = labels(field)
+                this.titleY = this.getLable(field)
                 this.callbackY(field)
             } else {
                 this.x = field
-                this.titleX = labels(field)
+                this.titleX = this.getLable(field)
                 this.callbackX(field)
             }
         },
         getClassActive (key) {
-            let ObjectStyle = {}
-            if (key===this.y) ObjectStyle = { 'list-group-item-warning': true }
-            if (key===this.x) ObjectStyle = { 'list-group-item-secondary': true }
-
-            return ObjectStyle
+            return (key===this.y || key===this.x) ? true : false
         },
+        totalExams(main){
+            return help.totalExams(main)
+        },
+        getLable(field) {
+            return field === 'total_exams' ? 'Production' : help.scores(field)
+        }
     },
     setup() {
-        return {
-            scores: h.scores()
-        }
+        return { scores: help.scores() }
     }
 }
 </script>
