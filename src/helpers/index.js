@@ -56,6 +56,10 @@ export default {
         return 'qual_score'
     },
 
+    random() {
+        return (Math.random() + 1).toString(36).substring(7)
+    },
+
     scores (key = '') { return key ? SCORES[key] : SCORES },
 
     symbol (key) { return key ? SYMBOL[key] : ''  },
@@ -74,7 +78,9 @@ export default {
     },
 
     is_between(search, start, end) {
-        return moment(search).isBetween(
+        let date = this.dateFormat(search)
+
+        return moment(date).isBetween(
             moment(start),
             moment(end),
             'days',

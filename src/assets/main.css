@@ -21,6 +21,15 @@ body {
   background-color: #fff;
   margin: 0 auto;
 }
+.item-disabled {
+  cursor: no-drop;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 2px dashed #ccc;
+  background-color: #ede8e8;
+  margin: 0 auto;
+}
 .item.active {
   border-color: #b8daef;
   background-color: #b8daef;

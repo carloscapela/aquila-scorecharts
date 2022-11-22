@@ -111,15 +111,14 @@
     },
     data() {
       return {
-        // devices: [],
         itemSelect: {},
         field: 'total_exams',
-        range: { start: null, end: null }
+        range: { start: null, end: null },
+        load: '',
       }
     },
     computed: mapState({
       customer: state => state.customer,
-      // devicesCutomer: state => state.devices,
       devices: state => state.devices,
       unit: state => state.main,
     }),
@@ -141,12 +140,14 @@
         })
         this.$store.dispatch('find', {name: this.$route.params.unitName, type: 'Unit:' })
 
-        // this.devices = this.devicesCutomer.filter(item => item.unit_name==this.$route.params.unitName)
         // Order
         this.devices.sort((a, b) =>
-          b[`_${help.getKeyScore(a)}`].max - a[`_${help.getKeyScore(a)}`].max
+          b[`_${help.getKeyScore(a)}`].avg - a[`_${help.getKeyScore(a)}`].avg
         )
+        // this.itemSelect = this.itemSelect.name ? this.itemSelect : this.unit
         this.itemSelect = this.unit
+        this.load = help.random()
+        // console.log(this.load)
       },
 
       operatorParams (deviceName = '') {
@@ -159,10 +160,6 @@
 
       symbol () { return help.symbol(this.field) },
 
-      // indicate (item) {
-      //   const f = this.field
-      //   return f=== 'total_exams' ? help.totalExams(item) : item[`_${f}`].avg
-      // },
       indicate (item) {
         let f = this.field
         let str = item[`_${f}`].avg

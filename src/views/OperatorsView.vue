@@ -31,11 +31,30 @@
         </div>
 
         <div class="row text-center justify-content-md-center">
-          <div class="col-sm-12 col-md-12 col-lg-3 mb-3" v-for="m in operators">
+          <div
+            class="col-sm-12 col-md-12 col-lg-3 mb-3"
+            v-for="m in operators"
+          >
+            <!-- Operator active -->
             <div
+              v-if="this.indicate(m) > 0"
               class="item position-relative shadow"
               :class="{ active: itemSelect.name == m.name }"
               @click="() => this.itemSelect = m">
+              <div class="position-absolute top-0 start-50 translate-middle badge rounded-pill badge text-bg-light">
+                {{ m.name }}
+              </div>
+              <h2 class="mt-2">
+                {{ this.indicate(m) }}
+                {{ this.symbol() }}
+              </h2>
+              <img src="@/assets/operator.png" alt="Devices" width="110" class="mt--5"/>
+            </div>
+            <!-- Operator disabled -->
+            <div
+              v-if="this.indicate(m) <= 0"
+              class="item-disabled position-relative shadow"
+              :class="{ active: itemSelect.name == m.name }">
               <div class="position-absolute top-0 start-50 translate-middle badge rounded-pill badge text-bg-light">
                 {{ m.name }}
               </div>
@@ -143,7 +162,7 @@
       handleInit (start='', end='') {
         // Main Store
         this.$store.dispatch('fetch', { name: this.$route.params.customer, start, end })
-        this.$store.dispatch('find', {name: this.$route.params.deviceName, type: 'Device:' })
+        this.$store.dispatch('find', { name: this.$route.params.deviceName, type: 'Device:' })
         var deviceName = this.device.name
         // Get Operators
         this.$store.dispatch('fetchOperators', {
@@ -182,11 +201,13 @@
       symbol () { return help.symbol(this.field) },
 
       indicate (item) {
+
         let f = this.field
         let str = item[`_${f}`].avg
 
         if (f === 'total_exams') str = help.totalExams(item)
         if (f === 'safety_score') str = item[`_${f}`].max
+        if (str <= 0) str = 0
 
         return str
       },

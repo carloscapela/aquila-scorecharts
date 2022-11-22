@@ -28,6 +28,7 @@ export default {
             required: false,
             default: [],
         },
+        load: String,
     },
     data() {
         return {
@@ -48,9 +49,7 @@ export default {
     created() {
         this.formatDate()
         this.handleInit()
-        if (this.field === 'prod_score') {
-            this.initChartColumn()
-        }
+        if (this.field === 'prod_score') this.initChartColumn()
     },
     methods: {
         getYaxis() {
@@ -63,6 +62,9 @@ export default {
                 min: 0,
                 max: this.main[`_${this.field}`].max,
             }
+        },
+        getLable() {
+            return this.field === 'total_exams' ? 'Production' : h.scores(this.field)
         },
         // convert date & time
         formatDate() {
@@ -124,7 +126,7 @@ export default {
                     offsetX: -5,
                 },
                 title: {
-                    text: `${this.main.name} - ${h.scores(this.field)}`,
+                    text: `${this.main.name} - ${this.getLable()}`,
                     align: 'left'
                 },
             }
@@ -137,14 +139,6 @@ export default {
                     toolbar: { show: true },
                     zoom: { enabled: true },
                 },
-                // colors: [function({ value, seriesIndex, w }) {
-                //     console.log(seriesIndex, value)
-                // //     const i = dataPointIndex
-                // //     if (this.barCategories[i][0] === '07:30:50') {
-                // //         return '#000'
-                // //     }
-                //     return '#D9534F'
-                // }],
                 plotOptions: {
                     bar: {
                         horizontal: false,
@@ -222,6 +216,14 @@ export default {
         },
     },
     watch: {
+        load(newValue, oldValue) {
+            if (newValue !== oldValue) {
+                console.log(newValue, oldValue)
+                this.formatDate()
+                this.handleInit()
+            }
+            if (this.field === 'prod_score') this.initChartColumn()
+        },
         field(newValue, oldValue) {
             if (newValue !== oldValue) {
                 this.formatDate()
