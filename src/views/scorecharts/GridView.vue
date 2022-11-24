@@ -127,13 +127,13 @@
 </template>
 
 <script>
-  import Header from '../components/Header.vue'
-  import LayoutMain from '../layouts/Main.vue'
-  import moment from 'moment'
   import { mapState } from 'vuex'
-  import SidebarComponent from '../components/mult/Sidebar.vue'
-  import LineComponent from '../components/mult/LineFooter.vue'
-  import SelectComponent from '../components/Select.vue'
+  import moment from 'moment'
+  import LayoutMain from '../../scorecharts/layouts/Main.vue'
+  import Header from '../../components/scorecharts/Header.vue'
+  import SidebarComponent from '../../components/scorecharts/mult/Sidebar.vue'
+  import LineComponent from '../../components/scorecharts/mult/LineFooter.vue'
+  import SelectComponent from '../../components/scorecharts/Select.vue'
 
 
   export default {

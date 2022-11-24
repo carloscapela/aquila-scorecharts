@@ -1,12 +1,11 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-// import VueDatepickerUi from 'vue-datepicker-ui'
 import VueApexCharts from 'vue3-apexcharts'
 import Popper from 'vue3-popper'
 import VCalendar from 'v-calendar'
 import vSelect from 'vue-select'
-import store from './store';
+import store from './scorecharts/store';
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'

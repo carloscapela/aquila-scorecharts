@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import help from '../helpers'
+import help from '../../scorecharts/helpers'
 export default {
     props: {
         title: String,

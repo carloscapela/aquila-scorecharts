@@ -17,7 +17,7 @@
 
 <script>
 import moment from 'moment'
-import h from '../helpers'
+import h from '../../scorecharts/helpers'
 
 export default {
     props: {

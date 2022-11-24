@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import UnitsView from '../views/UnitsView.vue'
-import DevicesView from '../views/DevicesView.vue'
-import OperatorsView from '../views/OperatorsView.vue'
-import GridView from '../views/GridView.vue'
+import HomeView from '../views/scorecharts/HomeView.vue'
+import UnitsView from '../views/scorecharts/UnitsView.vue'
+import DevicesView from '../views/scorecharts/DevicesView.vue'
+import OperatorsView from '../views/scorecharts/OperatorsView.vue'
+import GridView from '../views/scorecharts/GridView.vue'
 // lists
-import ListDevicesView from '../views/Lists/DevicesView.vue'
-import ListOperatorsView from '../views/Lists/OperatorsView.vue'
+import ListDevicesView from '../views/scorecharts/Lists/DevicesView.vue'
+import ListOperatorsView from '../views/scorecharts/Lists/OperatorsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

@@ -1,10 +1,12 @@
 <template>
-<div v-if="main">
+<div>
     <slot></slot>
     <div>
         <div class="input-group mb-2">
+            <span class="input-group-text" id="inputGroup-sizing-sm">X</span>
+            <input type="text" class="form-control" :value="titleX || 'Score X'" disabled>
             <button
-                class="btn btn-outline-secondary"
+                class="input-group-text"
                 type="button"
                 :class="{ disabled: !titleX }"
                 @click="() => {
@@ -15,17 +17,13 @@
             >
                 <i class="bi bi-trash"></i>
             </button>
-            <input
-                type="text"
-                class="form-control border-secondary"
-                :value="titleX || 'Score X'"
-                disabled
-            />
         </div>
 
         <div class="input-group mb-2">
+            <span class="input-group-text" id="inputGroup-sizing-sm">Y</span>
+            <input type="text" class="form-control" :value="titleY || 'Score Y'" disabled>
             <button
-                class="btn btn-outline-warning"
+                class="input-group-text"
                 type="button"
                 :class="{ disabled: !titleY }"
                 @click="() => {
@@ -36,63 +34,6 @@
             >
                 <i class="bi bi-trash"></i>
             </button>
-            <input
-                type="text"
-                class="form-control border-warning"
-                :value="titleY || 'Score Y'"
-                disabled
-            >
-        </div>
-    </div>
-    <IndicatorComponent
-        title="Production"
-        :options="main._total_exams"
-        :callback="() => this.handleClick('total_exams')"
-        :active="getClassActive('total_exams')"
-        :value="this.totalExams(main)"
-        field="total_exams"
-    />
-    <IndicatorComponent
-        v-for="(label, scoreKey) in scores"
-        :title="label"
-        :options="main[`_${scoreKey}`]"
-        :callback="() => this.handleClick(scoreKey)"
-        :active="getClassActive(scoreKey)"
-    />
-</div>
-<!-- <div>
-    <slot></slot>
-    <div>
-        <div class="input-group mb-2">
-            <button
-                class="btn btn-outline-secondary"
-                type="button"
-                :class="{ disabled: !titleX }"
-                @click="() => {
-                    x = null
-                    titleX = ''
-                }"
-                title="Clean X"
-            >
-                <i class="bi bi-trash"></i>
-            </button>
-            <input type="text" class="form-control border-secondary" :value="titleX || 'Score X'" disabled>
-        </div>
-
-        <div class="input-group mb-2">
-            <button
-                class="btn btn-outline-warning"
-                type="button"
-                :class="{ disabled: !titleY }"
-                @click="() => {
-                    y = null
-                    titleY = ''
-                }"
-                title="Clean Y"
-            >
-                <i class="bi bi-trash"></i>
-            </button>
-            <input type="text" class="form-control border-warning" :value="titleY || 'Score Y'" disabled>
         </div>
     </div>
 
@@ -229,20 +170,17 @@
             </div>
         </button>
     </div>
-</div> -->
+</div>
 </template>
 
 <script>
-import help from '../../helpers'
-import IndicatorComponent from '../Indicator.vue'
+import h from '../../scorecharts/helpers'
+
 export default {
     props: {
         main: Object,
         callbackX: Function,
         callbackY: Function,
-    },
-    components: {
-        IndicatorComponent
     },
     data() {
         return {
@@ -253,37 +191,32 @@ export default {
         }
     },
     methods: {
-        handleClick(field){
+        handleClick(field, key){
             if (!this.x && !this.y) {
-                this.x = field
-                this.titleX = this.getLable(field)
+                this.x = key
+                this.titleX = h.scores(field)
                 this.callbackX(field)
             } else if (this.x && !this.y) {
-                this.y = field
-                this.titleY = this.getLable(field)
+                this.y = key
+                this.titleY = h.scores(field)
                 this.callbackY(field)
             } else if (this.x && this.y) {
-                this.y = field
-                this.titleY = this.getLable(field)
+                this.y = key
+                this.titleY = h.scores(field)
                 this.callbackY(field)
             } else {
-                this.x = field
-                this.titleX = this.getLable(field)
+                this.x = key
+                this.titleX = h.scores(field)
                 this.callbackX(field)
             }
         },
         getClassActive (key) {
-            return (key===this.y || key===this.x) ? true : false
+            let ObjectStyle = {}
+            if (key===this.y) ObjectStyle = { 'list-group-item-warning': true }
+            if (key===this.x) ObjectStyle = { 'list-group-item-secondary': true }
+
+            return ObjectStyle
         },
-        totalExams(main){
-            return help.totalExams(main)
-        },
-        getLable(field) {
-            return field === 'total_exams' ? 'Production' : help.scores(field)
-        }
     },
-    setup() {
-        return { scores: help.scores() }
-    }
 }
 </script>

@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import OffcanvasComponent from '../components/Offcanvas.vue'
+import OffcanvasComponent from '../../components/scorecharts/Offcanvas.vue'
 
 export default {
     components: {OffcanvasComponent},

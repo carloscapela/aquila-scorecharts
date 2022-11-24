@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import h from '../helpers'
+import h from '../../scorecharts/helpers'
 export default {
     props: {
         field: String,

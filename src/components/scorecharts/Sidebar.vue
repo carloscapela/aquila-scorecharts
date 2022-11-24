@@ -25,7 +25,7 @@
 
 <script>
 import IndicatorComponent from './Indicator.vue'
-import help from '../helpers'
+import help from '../../scorecharts/helpers'
 export default {
     props: {
         main: Object,

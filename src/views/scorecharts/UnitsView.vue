@@ -48,13 +48,13 @@
 
 <script>
 import moment from 'moment'
-import help from '../helpers'
-import DateRanger from '../components/DateRanger.vue'
-import Header from '../components/Header.vue'
-import LayoutMain from '../layouts/Main.vue'
-import SidebarComponent from '../components/Sidebar.vue'
-import LineFooterComponent from '../components/LineFooter.vue'
-import SelectComponent from '../components/Select.vue'
+import help from '../../scorecharts/helpers'
+import LayoutMain from '../../scorecharts/layouts/Main.vue'
+import DateRanger from '../../components/scorecharts/DateRanger.vue'
+import Header from '../../components/scorecharts/Header.vue'
+import SidebarComponent from '../../components/scorecharts/Sidebar.vue'
+import LineFooterComponent from '../../components/scorecharts/LineFooter.vue'
+import SelectComponent from '../../components/scorecharts/Select.vue'
 import { mapState } from 'vuex'
 
 export default {
