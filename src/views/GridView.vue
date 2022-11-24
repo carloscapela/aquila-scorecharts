@@ -7,21 +7,37 @@
     </template>
     <template #content>
 
-      <!-- <div class="row mb-2">
-        <div class="col-4">
-          <div class="card" @click="handleOptions('units')">
-            <div class="card-header text-center">Units</div>
-            <div class="card-body p-1">
-              <v-select
-                disableb
-                :options="units"
-                v-model="input"
-                :get-option-label="(op) => op.name"
-              ></v-select>
-            </div>
-          </div>
+      <div class="row mb-2">
+        <div class="btn-group dropend">
+          <button type="button" class="btn btn-secondary">
+            Units
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <span class="visually-hidden">Toggle Dropend</span>
+          </button>
+          <ul class="dropdown-menu">
+            <!-- Dropdown menu links -->
+          </ul>
         </div>
-
+          <!-- <div class="col-4">
+            <div class="card" @click="handleOptions('units')">
+              <div class="card-header text-center">Units</div>
+              <div class="card-body p-1">
+                <v-select
+                  disableb
+                  :options="units"
+                  v-model="input"
+                  :get-option-label="(op) => op.name"
+                ></v-select>
+              </div>
+            </div>
+          </div> -->
+        <!--
         <div class="col-4">
           <div class="card" @click="handleOptions('devices')">
             <div class="card-header text-center">Devices</div>
@@ -47,7 +63,8 @@
             </div>
           </div>
         </div>
-      </div> -->
+         -->
+      </div>
 
       <div class="card">
         <div class="position-relative">
@@ -90,11 +107,11 @@
           </div>
         </div>
         <div class="card-body p-1">
-          <LineComponent
+          <!-- <LineComponent
             :fieldX="field.x"
             :fieldY="field.y"
             :main="customer"
-          />
+          /> -->
         </div>
       </div>
     </template>
@@ -251,22 +268,4 @@
   z-index: 99;
   background-color: #b3e4fc;
 }
-
-/* :deep(.popper) {
-  background: #e92791;
-  padding: 20px;
-  border-radius: 20px;
-  color: #fff;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-:deep(.popper #arrow::before) {
-  background: #e92791;
-}
-
-:deep(.popper:hover),
-:deep(.popper:hover > #arrow::before) {
-  background: #e92791;
-} */
 </style>

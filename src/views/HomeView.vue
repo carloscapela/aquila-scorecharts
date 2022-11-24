@@ -4,7 +4,7 @@
       <div class="row justify-content-md-center">
         <div class="col mt-5">
           <img
-            src="@/assets/aquila.jpg"
+            src="@/assets/aquila.png"
             class="rounded mx-auto d-block animate__animated animate__bounce"
             width="200"
           />
