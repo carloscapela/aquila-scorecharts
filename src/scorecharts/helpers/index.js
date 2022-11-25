@@ -80,7 +80,7 @@ export default {
     is_between(search, start, end) {
         let date = this.dateFormat(search)
 
-        return moment(date).isBetween(
+        return moment(date).utc(0).isBetween(
             moment(start),
             moment(end),
             'days',
@@ -91,7 +91,7 @@ export default {
     // Return format MMM DD YYYY
     dateFormat(dsn) {
         let value = dsn.replace('T00:00:00.000Z', '')
-        return moment(value).format('MMM DD YYYY')
+        return moment(value).utc(0).format('MMM DD YYYY')
     },
     // Numbers
     percent (v) { return (v*100).toFixed() },
@@ -161,33 +161,15 @@ export default {
        return exames.length ? this.sum(exames) : 0
     },
 
-    // GMapCircle(lat,lng,rad,detail=8){
-    //     var uri = 'https://maps.googleapis.com/maps/api/staticmap?key=' + API_KEY;
-    //     // https://maps.googleapis.com/maps/api/staticmap?center=Brooklyn+Bridge,New+York,NY&zoom=13&size=600x300&maptype=roadmap
-    //     // &markers=color:blue%7Clabel:S%7C40.702147,-74.015794&markers=color:green%7Clabel:G%7C40.711614,-74.012318
-    //     // &markers=color:red%7Clabel:C%7C40.718217,-73.998284
-    //     // &key=YOUR_API_KEY&signature=YOUR_SIGNATURE
+    // Return Object { start, end } // date format YYYY-MM-DD
+    // create a query with default date
+    queryDate(query) {
+        let start = moment().subtract(1, 'months').format('YYYY-MM-DD')
+        let end = moment().format('YYYY-MM-DD')
 
-    //     // var staticMapSrc = '&center=' + lat + ',' + lng;
-    //     var staticMapSrc = '&center=Brooklyn+Bridge,New+York,NY'
-    //     staticMapSrc += '&size=850x650&zoom=13';
-    //     staticMapSrc += '&path=color:0xff0000ff:weight:1';
+        if (query.start) start = moment(query.start, 'YYYY-MM-DD').utc(0).format('YYYY-MM-DD')
+        if (query.end) end = moment(query.end, 'YYYY-MM-DD').utc(0).format('YYYY-MM-DD')
 
-    //     var r    = 6371;
-    //     var pi   = Math.PI;
-    //     var _lat  = (lat * pi) / 180;
-    //     var _lng  = (lng * pi) / 180;
-    //     var d    = (rad/1000) / r;
-    //     var i = 0;
-
-    //     for(i = 0; i <= 360; i+=detail) {
-    //         var brng = i * pi / 180;
-    //         var pLat = Math.asin(Math.sin(_lat) * Math.cos(d) + Math.cos(_lat) * Math.sin(d) * Math.cos(brng));
-    //         var pLng = ((_lng + Math.atan2(Math.sin(brng) * Math.sin(d) * Math.cos(_lat), Math.cos(d) - Math.sin(_lat) * Math.sin(pLat))) * 180) / pi;
-    //         pLat = (pLat * 180) / pi;
-    //        staticMapSrc += "|" + pLat + "," + pLng;
-    //     }
-
-    //     return uri + encodeURI(staticMapSrc);
-    // }
+        return { start, end }
+    },
 }

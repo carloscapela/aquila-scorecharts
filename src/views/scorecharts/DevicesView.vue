@@ -44,7 +44,7 @@
               </h2>
               <img src="@/assets/mammography.png" alt="Devices" width="110" />
               <br>
-              <router-link :to="{ name: 'operators', params: operatorParams(m.name) }">
+              <router-link :to="{ name: 'operators', params: operatorParams(m.name), query: this.range }">
                 Operators
               </router-link>
             </div>
@@ -88,7 +88,6 @@
 </template>
 
 <script>
-  import moment from 'moment'
   import LayoutMain from '../../scorecharts/layouts/Main.vue'
   import help from '../../scorecharts/helpers'
   import DateRanger from '../../components/scorecharts/DateRanger.vue'
@@ -123,8 +122,7 @@
       unit: state => state.main,
     }),
     created() {
-      this.range.start = moment().subtract(1, 'months').format('YYYY-MM-DD')
-      this.range.end = moment().format('YYYY-MM-DD')
+      this.range = help.queryDate(this.$route.query)
       this.handleInit(this.range.start, this.range.end)
     },
     methods: {

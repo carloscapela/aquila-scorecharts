@@ -85,7 +85,6 @@
 </template>
 
 <script>
-  import moment from 'moment'
   import { mapState } from 'vuex'
   import help from '../../../scorecharts/helpers'
   import LayoutMain from '../../../scorecharts/layouts/Main.vue'
@@ -118,8 +117,9 @@
       devices: state => state.devices,
     }),
     created() {
-      this.range.start = moment().subtract(1, 'months').format('YYYY-MM-DD')
-      this.range.end = moment().format('YYYY-MM-DD')
+      // this.range.start = moment().subtract(1, 'months').format('YYYY-MM-DD')
+      // this.range.end = moment().format('YYYY-MM-DD')
+      this.range = help.queryDate(this.$route.query)
       this.handleInit(this.range.start, this.range.end)
     },
     methods: {

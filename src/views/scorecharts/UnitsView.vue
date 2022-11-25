@@ -81,8 +81,7 @@ export default {
   }),
 
   created() {
-    this.range.start = moment().subtract(1, 'months').format('YYYY-MM-DD')
-    this.range.end = moment().format('YYYY-MM-DD')
+    this.range = help.queryDate(this.$route.query)
     this.handleInit(this.range.start, this.range.end)
   },
 
@@ -134,7 +133,6 @@ export default {
       pointRadius.map(item =>
         radius = item.value === valueMax ? item.radius : radius
       )
-      // console.log(pointRadius)
 
       return radius
     },
@@ -155,7 +153,7 @@ export default {
             const href = this.$router.resolve({ name: 'devices', params: {
               unitName: unit.unit_name,
               customer: unit.customer_name,
-            }}).href
+            }, query: this.range }).href
 
             let radius = this.getDataRadius(
               this.indicate(unit)

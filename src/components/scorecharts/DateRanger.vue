@@ -1,12 +1,15 @@
 <template>
-  <form class="d-flex" role="search" @submit.prevent>
+  <form class="d-flex" role="search" method="GET">
     <v-date-picker
       v-model="range"
       mode="date"
       :masks="masks"
       is-range
+      :timezone="['UTC']"
     >
       <template v-slot="{ inputValue, inputEvents, isDragging }">
+        <input type="hidden" name="start" :value="inputValue.start">
+        <input type="hidden" name="end" :value="inputValue.end">
         <div class="btn-toolbar">
           <div class="btn-group btn-group-sm me-2" role="group" aria-label="Basic example">
             <button type="button" class="btn btn-primary">
@@ -20,7 +23,7 @@
             </button>
           </div>
           <div class="me-2 btn-group btn-group-sm">
-            <button class="btn btn-outline-secondary" @click="handle()">
+            <button class="btn btn-outline-secondary" type="submit">
               <i class="bi bi-search"></i>
             </button>
           </div>
@@ -48,9 +51,9 @@
       if (this.start) this.range.start = this.start
     },
     methods: {
-      handle() {
-        this.handleSubmit(this.range.start, this.range.end)
-      },
+      // handle() {
+      //   this.handleSubmit(this.range.start, this.range.end)
+      // },
       clear () { this.handleSubmit() }
     },
   }
