@@ -8,62 +8,71 @@
     <template #content>
 
       <div class="row mb-2">
-        <div class="btn-group dropend">
-          <button type="button" class="btn btn-secondary">
-            Units
-          </button>
-          <button
-            type="button"
-            class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            <span class="visually-hidden">Toggle Dropend</span>
-          </button>
-          <ul class="dropdown-menu">
-            <!-- Dropdown menu links -->
-          </ul>
-        </div>
-          <!-- <div class="col-4">
-            <div class="card" @click="handleOptions('units')">
-              <div class="card-header text-center">Units</div>
-              <div class="card-body p-1">
-                <v-select
-                  disableb
-                  :options="units"
-                  v-model="input"
-                  :get-option-label="(op) => op.name"
-                ></v-select>
-              </div>
-            </div>
-          </div> -->
-        <!--
-        <div class="col-4">
-          <div class="card" @click="handleOptions('devices')">
-            <div class="card-header text-center">Devices</div>
-            <div class="card-body p-1">
-              <v-select
-                :options="devices"
-                v-model="input"
-                :get-option-label="(op) => op.name"
-              ></v-select>
-            </div>
+        <div class="col-sm-12 col-md-4 col-lg-4">
+          <div class="btn-group dropend">
+            <button type="button" class="btn btn-secondary">
+              Units
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <span class="visually-hidden">Toggle Dropend</span>
+            </button>
+            <ul class="dropdown-menu">
+              <li v-for="m in units">
+                <a class="dropdown-item" href="#">{{ m.name }}</a>
+              </li>
+            </ul>
           </div>
         </div>
 
-        <div class="col-4">
-          <div class="card" @click="handleOptions('operators')">
-            <div class="card-header text-center">Operators</div>
-            <div class="card-body p-1">
-              <v-select
-                :options="units"
-                v-model="input"
-                :get-option-label="(op) => op.name"
-              ></v-select>
-            </div>
+        <div class="col-sm-12 col-md-4 col-lg-4">
+          <div class="btn-group dropend">
+            <button type="button" class="btn btn-secondary">
+              Devices
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <span class="visually-hidden">Toggle Dropend</span>
+            </button>
+            <ul class="dropdown-menu">
+              <li v-for="m in devices">
+                <a class="dropdown-item" href="#">{{ m.name }}</a>
+              </li>
+            </ul>
           </div>
         </div>
-         -->
+
+        <div class="col-sm-12 col-md-4 col-lg-4">
+          <!--
+          <div class="btn-group dropend"> -->
+            <button type="button" class="btn btn-secondary">
+              Operators
+            </button>
+            <!-- <button
+              type="button"
+              class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <span class="visually-hidden">Toggle Dropend</span>
+            </button>
+            <ul class="dropdown-menu">
+              <li v-for="m in devices">
+                <a class="dropdown-item" href="#">{{ m.name }}</a>
+              </li>
+            </ul>
+          </div>
+          -->
+        </div>
+
       </div>
 
       <div class="card">
@@ -75,8 +84,6 @@
               left: getPostion(m, field.x),
               bottom: getPostion(m, field.y),
               transition: 'all 300ms',
-              // width: m[`_${field.x})`].avg + 'px',
-              // height: m[`_${field.x})`].avg + 'px',
             }"
           >
             <!-- <img src="@/assets/operator.png" alt="Devices" width="50" /> -->
@@ -128,6 +135,7 @@
 
 <script>
   import { mapState } from 'vuex'
+  import help from '../../scorecharts/helpers'
   import LayoutMain from '../../scorecharts/layouts/Main.vue'
   import Header from '../../components/scorecharts/Header.vue'
   import SidebarComponent from '../../components/scorecharts/mult/Sidebar.vue'
