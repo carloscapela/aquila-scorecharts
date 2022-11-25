@@ -22,7 +22,7 @@
         <li class="nav-item">
           <router-link
             v-if="customer"
-            :to="{ name: 'ListDevices', params: { customer: customer } }"
+            :to="{ name: 'ListDevices', params: { customer: customer }, query: range}"
             class="nav-link"
           >
             <i class="bi bi-house-heart"></i>
@@ -32,7 +32,7 @@
         <li class="nav-item">
           <router-link
             v-if="customer"
-            :to="{ name: 'ListOperators', params: { customer: customer } }"
+            :to="{ name: 'ListOperators', params: { customer: customer }, query: range}"
             class="nav-link"
           >
             <i class="bi bi-people"></i>
@@ -42,7 +42,7 @@
         <li class="nav-item">
           <router-link
             v-if="customer"
-            :to="{ name: 'grid', params: { customer: customer } }"
+            :to="{ name: 'grid', params: { customer: customer }, query: range }"
             class="nav-link disabled"
           >
             <i class="bi bi-graph-up-arrow"></i>
@@ -55,27 +55,33 @@
 </template>
 
 <script>
+import help from '../../scorecharts/helpers'
+
 export default {
   props: {
     customer: {
       type: Number,
       required: false,
     },
-
     unit: {
       type: String,
       required: false,
     },
-
     device: {
       type: String,
       required: false,
     },
   },
+
   data() {
     return {
       dates: null,
+      range: {},
     }
+  },
+
+  created() {
+    this.range = help.queryDate(this.$route.query)
   },
 }
 </script>

@@ -20,7 +20,7 @@
           <!-- Units -->
           <li class="nav-item" v-if="unit">
             <router-link
-              :to="{ name: 'customer', params: { customer : customer, unitName: unit }}"
+              :to="{ name: 'customer', params: { customer : customer, unitName: unit }, query: range}"
               class="nav-link text-truncate"
               :title="unit"
             >
@@ -37,7 +37,7 @@
 
           <li class="nav-item" v-if="device">
             <router-link
-              :to="{ name: 'devices', params: { customer : customer, unitName: unit}}"
+              :to="{ name: 'devices', params: { customer : customer, unitName: unit}, query: range }"
               class="nav-link text-truncate"
               :title="device"
             >
@@ -59,6 +59,8 @@
 </template>
 
 <script>
+import help from '../../scorecharts/helpers'
+
 export default {
   props: {
     customer: {
@@ -77,7 +79,11 @@ export default {
   data() {
     return {
       dates: null,
+      range: {},
     }
+  },
+  created() {
+    this.range = help.queryDate(this.$route.query)
   },
 }
 </script>

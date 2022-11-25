@@ -47,7 +47,6 @@
 </template>
 
 <script>
-import moment from 'moment'
 import help from '../../scorecharts/helpers'
 import LayoutMain from '../../scorecharts/layouts/Main.vue'
 import DateRanger from '../../components/scorecharts/DateRanger.vue'
