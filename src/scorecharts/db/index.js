@@ -41,6 +41,7 @@ export default {
     },
 
     // TYPES
+    // ===========================================================
     // customer_name: String || Number,
     // unit_name: String,
     // name: String || Number,
@@ -83,7 +84,9 @@ export default {
     // avg_grade: Array,
     // study_description: Array,
     // n_images: Array,
+    // ===========================================================
     toJson (dataJson, start='', end='', filterCallback = null) {
+        // console.log(dataJson)
         const data = []
 
         // filtercallback
@@ -103,7 +106,7 @@ export default {
                     lat: item.lat || null,
                     long: item.long || null,
                     // Array
-                    id: [],
+                    // id: [],
                     general_score: [],
                     qual_score: [],
                     prod_score: [],
@@ -153,7 +156,7 @@ export default {
             var key = data.findIndex(d => d.name === item.name)
             if (key >= 0) {
                 data[key].data.push(item)
-                data[key].id.push(item.id)
+                // data[key].id.push(item.id)
                 data[key].avg_exam_duration.push(help.float(item.avg_exam_duration))
                 data[key].general_score.push(help.percent(item.general_score))
                 data[key].qual_score.push(help.percent(item.qual_score))

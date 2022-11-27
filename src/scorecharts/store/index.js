@@ -1,10 +1,14 @@
 import { createStore } from 'vuex'
-import db from '../db'
+import axios from 'axios'
+// import db from '../db'
+import help from '../helpers'
 
 export default createStore({
     state: {
         // Collection
         data: [],
+        dataLoad: false,
+
         units: [],
         devices: [],
         operators: [],
@@ -13,6 +17,35 @@ export default createStore({
         main: {},
     },
     actions: {
+        // payload: {
+        //     name: Number | String,
+        //     start: String,
+        //     end: String,
+        // }
+        // async fetch({ commit, dispatch }, { name, start, end }) {
+
+        //         commit('SET_DATA_LOAD', true)
+
+        //         const customerId = Number(name)
+
+        //         const response = await axios.get(
+        //             `https://scorechat-aquila.herokuapp.com/api/${customerId}`,
+        //             { params: { start, end } }
+        //         )
+        //         const resp = help.toObj(response.data)
+
+        //         if (response.status === 200) {
+        //             commit('SET_DATA', resp)
+
+        //             dispatch('fetchCustomer', customerId)
+        //             dispatch('fetchUnits', customerId)
+        //         } else {
+        //             commit('SET_DATA', [])
+        //         }
+            
+        //         commit('SET_DATA_LOAD', false)
+        // },
+
         // not async
         // payload: {
         //     name: Number | String,
@@ -21,6 +54,7 @@ export default createStore({
         // }
         fetch({ commit, dispatch }, { name, start, end }) {
             try {
+                
                 const customerId = Number(name)
 
                 const resp = db.toObj(customerId, start, end)
@@ -100,11 +134,13 @@ export default createStore({
             const data = this.state.data
 
             const resp = data.find(item => item.type == type && item.name == name)
-
+            
             commit('SET_MAIN', resp)
         }
     },
     mutations: {
+        SET_DATA_LOAD(state, data) { state.dataLoad = data },
+
         SET_DATA(state, data) { state.data = data },
 
         SET_UNITS(state, data) { state.units = data },
