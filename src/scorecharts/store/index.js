@@ -1,7 +1,8 @@
 import { createStore } from 'vuex'
-import axios from 'axios'
-// import db from '../db'
 import help from '../helpers'
+import axios from 'axios'
+// TEMP
+import db from '../db'
 
 export default createStore({
     state: {
@@ -12,6 +13,7 @@ export default createStore({
         units: [],
         devices: [],
         operators: [],
+
         // Object
         customer: {},
         main: {},
@@ -22,29 +24,29 @@ export default createStore({
         //     start: String,
         //     end: String,
         // }
-        // async fetch({ commit, dispatch }, { name, start, end }) {
+        async fetchApi({ commit, dispatch }, { name, start, end }) {
 
-        //         commit('SET_DATA_LOAD', true)
+                commit('SET_DATA_LOAD', true)
 
-        //         const customerId = Number(name)
+                const customerId = Number(name)
 
-        //         const response = await axios.get(
-        //             `https://scorechat-aquila.herokuapp.com/api/${customerId}`,
-        //             { params: { start, end } }
-        //         )
-        //         const resp = help.toObj(response.data)
+                const response = await axios.get(
+                    `https://scorechat-aquila.herokuapp.com/api/${customerId}`,
+                    { params: { start, end } }
+                )
+                const resp = help.toObj(response.data)
 
-        //         if (response.status === 200) {
-        //             commit('SET_DATA', resp)
+                if (response.status === 200) {
+                    commit('SET_DATA', resp)
 
-        //             dispatch('fetchCustomer', customerId)
-        //             dispatch('fetchUnits', customerId)
-        //         } else {
-        //             commit('SET_DATA', [])
-        //         }
+                    dispatch('fetchCustomer', customerId)
+                    dispatch('fetchUnits', customerId)
+                } else {
+                    commit('SET_DATA', [])
+                }
             
-        //         commit('SET_DATA_LOAD', false)
-        // },
+                commit('SET_DATA_LOAD', false)
+        },
 
         // not async
         // payload: {
