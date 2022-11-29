@@ -15,7 +15,6 @@ import help from '../../../scorecharts/helpers'
 
 export default {
     props: {
-        // options: Array,
         fieldX: String,
         fieldY: String,
         main: {},
@@ -39,17 +38,19 @@ export default {
             this.dates = dt
         },
         handleSeries () {
+
             const data = []
+
             if (this.fieldX) {
                 data.push({
                     name: help.scores(this.fieldX),
-                    data: this.main[this.fieldX],
+                    data: this.getOptionsPercent(this.fieldX, this.main[this.fieldX]),
                 })
             }
             if (this.fieldY) {
                 data.push({
                     name: help.scores(this.fieldY),
-                    data: this.main[this.fieldY],
+                    data: this.getOptionsPercent(this.fieldY, this.main[this.fieldY]),
                 })
             }
 
@@ -105,15 +106,22 @@ export default {
             }
         },
 
+        getOptionsPercent(field, array) {
+            let options = []
+            if (field==='avg_exam_duration' || field==='total_exams') {
+                var max = this.main[`_${field}`].max
+                array.map(value => options.push(help.toPercent(value, max)) )
+                return options
+            }
+            return array
+        },
+
         getYaxis () {
             let str = 'Percentage'
-            if (this.fieldY==='avg_exam_duration') str = 'Time'
-            if (this.fieldY==='total_exams') str = 'Totalizer'
-
             return {
                 title: { text: str },
                 min: 0,
-                max: this.main[`_${this.fieldY}`].max,
+                max: 100,
             }
         },
     },

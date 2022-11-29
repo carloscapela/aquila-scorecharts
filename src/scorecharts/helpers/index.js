@@ -303,4 +303,15 @@ export default {
 
         return data
     },
+
+    // Converts varying values to percentage.
+    // Uses a simple three-rule pattern
+    // used in Production and AVG Time
+    toPercent(value, max) {
+        let v = this.float(value)
+        let m = this.float(max)
+        // max ==> 100%
+        // value ==> x
+        return this.float( (v * 100) / m )
+    },
 }

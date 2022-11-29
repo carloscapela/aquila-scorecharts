@@ -48,10 +48,6 @@ export default {
             this.key = field
             this.callback(field)
         },
-        symbol (key) {
-            return help.symbol(key)
-        },
-
         totalExams(main){
             return help.totalExams(main)
         }

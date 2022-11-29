@@ -5,6 +5,7 @@ import VueApexCharts from 'vue3-apexcharts'
 import Popper from 'vue3-popper'
 import VCalendar from 'v-calendar'
 import vSelect from 'vue-select'
+
 import store from './scorecharts/store';
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -14,6 +15,7 @@ import 'v-calendar/dist/style.css'
 import 'animate.css'
 import 'vue-select/dist/vue-select.css'
 import '@/assets/main.css'
+import 'floating-vue/dist/style.css'
 
 const app = createApp(App)
 
