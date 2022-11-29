@@ -1,49 +1,40 @@
 <template>
 <div v-if="main">
     <slot></slot>
-    <div>
-        <div class="input-group mb-2">
+    <div class="card mb-2 text-center">
+        <div class="card-header">
+           Name: {{ main.name }}
+        </div>
+        <div class="card-body">
             <button
-                class="btn btn-outline-secondary"
-                type="button"
+                class="btn btn-secondary btn-sm m-1"
                 :class="{ disabled: !titleX }"
                 @click="() => {
                     x = null
                     titleX = ''
                 }"
-                title="Clean X"
+                type="button"
             >
                 <i class="bi bi-trash"></i>
+                {{ titleX || 'Score X' }}
             </button>
-            <input
-                type="text"
-                class="form-control border-secondary"
-                :value="titleX || 'Score X'"
-                disabled
-            />
-        </div>
 
-        <div class="input-group mb-2">
+
             <button
-                class="btn btn-outline-warning"
-                type="button"
+                class="btn btn-warning btn-sm m-1"
                 :class="{ disabled: !titleY }"
                 @click="() => {
                     y = null
                     titleY = ''
                 }"
-                title="Clean Y"
+                type="button"
             >
                 <i class="bi bi-trash"></i>
+                {{ titleY || 'Score X' }}
             </button>
-            <input
-                type="text"
-                class="form-control border-warning"
-                :value="titleY || 'Score Y'"
-                disabled
-            >
         </div>
     </div>
+
     <IndicatorComponent
         title="Production"
         :options="main._total_exams"
@@ -52,12 +43,22 @@
         :value="this.totalExams(main)"
         field="total_exams"
     />
+    <!-- <IndicatorComponent
+        v-for="(label, scoreKey) in scores"
+        :title="label"
+        :options="main[`_${scoreKey}`]"
+        :callback="() => this.handleClick(scoreKey)"
+        :active="getClassActive(scoreKey)"
+        :value="scoreKey==='safety_score' ? main[`_${scoreKey}`].max : main[`_${scoreKey}`].avg"
+    /> -->
     <IndicatorComponent
         v-for="(label, scoreKey) in scores"
         :title="label"
         :options="main[`_${scoreKey}`]"
         :callback="() => this.handleClick(scoreKey)"
         :active="getClassActive(scoreKey)"
+        :field="scoreKey"
+        :value="scoreKey==='safety_score' ? main[`_${scoreKey}`].max : main[`_${scoreKey}`].avg"
     />
 </div>
 </template>

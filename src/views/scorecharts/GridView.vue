@@ -21,11 +21,11 @@
             type="button"
             id="button-addon1"
             @click="() => {
-              this.options = this.units
               this.input = 'units'
-              // this.unit = {}
-              this.device = {}
-              this.getDevices()
+              this.options = this.units
+              if (this.unit) this.options = [this.unit]
+              this.device = null
+              this.operator = null
             }"
             :class="[this.input==='units' ? 'btn-secondary' : 'btn-outline-secondary']"
           >
@@ -49,8 +49,10 @@
             id="button-addon1"
             @click="() => {
               this.getDevices()
-              this.options = this.devices
               this.input = 'devices'
+              this.options = this.devices
+              if (this.device) this.options = [this.devices]
+              this.operator = null
             }"
             :class="[this.input==='devices' ? 'btn-secondary' : 'btn-outline-secondary']"
           >
@@ -74,6 +76,7 @@
             @click="() => {
               this.getOperators()
               this.options = this.operators
+              if (this.operator) this.options = [this.operator]
               this.input = 'operators'
             }"
             :class="[this.input==='operators' ? 'btn-secondary' : 'btn-outline-secondary']"
@@ -81,6 +84,13 @@
             Operators
             <span class="badge text-bg-light float-end">{{ this.operators.length }}</span>
           </button>
+          <v-select
+            :options="operators"
+            v-model="operator"
+            :get-option-label="(op) => op.name"
+            class="mt-2"
+            :disabled="input!=='operators'"
+          ></v-select>
         </div>
 
       </div>
@@ -119,11 +129,15 @@
                 <ul class="list-group list-group-flush">
                   <li class="list-group-item">
                     <span class="badge text-bg-secondary">X axis</span>
-                    {{ field.x }}: <b>{{ m[`_${field.x}`].avg }} ({{ getPostion(m, field.x) + '%' }})</b>
+                    {{ this.scoreLabel(field.x) }}:
+                    {{ m[`_${field.x}`].avg }}
+                    ({{ getPostion(m, field.x) + '%' }})
                   </li>
                   <li class="list-group-item">
                     <span class="badge text-bg-warning">Y axis</span>
-                    {{ field.y }}: <b>{{ m[`_${field.y}`].avg }} ({{ getPostion(m, field.y) + '%' }})</b>
+                    {{ this.scoreLabel(field.y) }}:
+                    {{ m[`_${field.y}`].avg }}
+                    ({{ getPostion(m, field.y) + '%' }})
                   </li>
                 </ul>
               </div>
@@ -201,8 +215,9 @@
         range: { start: null, end: null },
         // Sidebar
         field: { x: 'total_exams', y: 'general_score' },
-        unit: {},
-        device: {},
+        unit: null,
+        device: null,
+        operator: null,
         itemSelect: {},
         input: null,
       }
@@ -257,6 +272,11 @@
         this.getOperators()
       },
 
+      scoreLabel (field) {
+        return field === 'total_exams'
+          ? 'Production' : help.scores(field)
+      },
+
       // Interage API
       getDevices() {
         this.$store.dispatch('fetchDevices', {
@@ -293,8 +313,7 @@
           : value
       },
 
-      // width: 80px;
-      // height: 80px;
+      // width: 80px; height: 80px;
       getDimension(obj) {
 
         let w = this.getPostion(obj, this.field.x)
@@ -315,14 +334,40 @@
       },
     },
 
-    // setup () {
-    //   return { scores: help.scores() }
-    // }
     watch: {
       unit(newValue, oldValue) {
-        if (newValue !== oldValue) {
-          // this.itemSelect = this.customer
-          this.getDevices()
+        if (!newValue) {
+          this.itemSelect = this.customer
+          this.options = this.units
+        }
+
+        if (newValue !== oldValue && newValue) {
+          this.itemSelect = newValue
+          this.options = [newValue]
+        }
+      },
+
+      device(newValue, oldValue) {
+        if (!newValue) {
+          this.itemSelect = this.unit ? this.unit : this.customer
+          this.options = this.devices
+        }
+
+        if (newValue !== oldValue && newValue) {
+          this.itemSelect = newValue
+          this.options = [newValue]
+        }
+      },
+
+      operator(newValue, oldValue) {
+        if (!newValue) {
+          this.itemSelect = this.device ? this.device : this.customer
+          this.options = this.operators
+        }
+
+        if (newValue !== oldValue && newValue) {
+          this.itemSelect = newValue
+          this.options = [newValue]
         }
       },
     },
