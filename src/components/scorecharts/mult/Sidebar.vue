@@ -43,14 +43,6 @@
         :value="this.totalExams(main)"
         field="total_exams"
     />
-    <!-- <IndicatorComponent
-        v-for="(label, scoreKey) in scores"
-        :title="label"
-        :options="main[`_${scoreKey}`]"
-        :callback="() => this.handleClick(scoreKey)"
-        :active="getClassActive(scoreKey)"
-        :value="scoreKey==='safety_score' ? main[`_${scoreKey}`].max : main[`_${scoreKey}`].avg"
-    /> -->
     <IndicatorComponent
         v-for="(label, scoreKey) in scores"
         :title="label"

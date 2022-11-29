@@ -170,7 +170,7 @@
           <LineComponent
             :fieldX="field.x"
             :fieldY="field.y"
-            :main="itemSelect.name ? itemSelect : customer"
+            :main="itemSelect ? itemSelect : customer"
           />
         </div>
       </div>
@@ -178,7 +178,7 @@
 
     <template #sidebar>
       <SidebarComponent
-        :main="itemSelect.name ? itemSelect : customer"
+        :main="itemSelect ? itemSelect : customer"
         :callbackX="(v) => this.setClickData(v)"
         :callbackY="(v) => this.setClickDataY(v)"
       />
@@ -218,7 +218,7 @@
         unit: null,
         device: null,
         operator: null,
-        itemSelect: {},
+        itemSelect: null,
         input: null,
       }
     },

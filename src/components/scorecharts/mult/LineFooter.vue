@@ -37,19 +37,26 @@ export default {
             this.main.study_date.map(d => dt.push(moment(d).format('MMM DD YYYY')))
             this.dates = dt
         },
+
+        scoreLabel (field) {
+            return field === 'total_exams'
+                ? 'Production'
+                : help.scores(field)
+        },
+
         handleSeries () {
 
             const data = []
 
             if (this.fieldX) {
                 data.push({
-                    name: help.scores(this.fieldX),
+                    name: this.scoreLabel(this.fieldX),
                     data: this.getOptionsPercent(this.fieldX, this.main[this.fieldX]),
                 })
             }
             if (this.fieldY) {
                 data.push({
-                    name: help.scores(this.fieldY),
+                    name: this.scoreLabel(this.fieldY),
                     data: this.getOptionsPercent(this.fieldY, this.main[this.fieldY]),
                 })
             }
@@ -127,10 +134,21 @@ export default {
     },
     watch: {
         fieldX(newValue, oldValue) {
-            if (newValue !== oldValue) this.handleSeries()
+            if (newValue !== oldValue) {
+                this.handleSeries()
+            }
         },
         fieldY(newValue, oldValue) {
-            if (newValue !== oldValue) this.handleSeries()
+            if (newValue !== oldValue) {
+                this.handleSeries()
+            }
+        },
+        main(newValue, oldValue) {
+            if (newValue !== oldValue) {
+                this.handleSeries()
+                this.formatDate()
+                this.handleInit()
+            }
         },
     },
 }

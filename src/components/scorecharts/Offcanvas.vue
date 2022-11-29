@@ -43,7 +43,7 @@
           <router-link
             v-if="customer"
             :to="{ name: 'grid', params: { customer: customer }, query: range }"
-            class="nav-link disabled"
+            class="nav-link"
           >
             <i class="bi bi-graph-up-arrow"></i>
             Chart XY
