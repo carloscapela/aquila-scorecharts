@@ -5,7 +5,7 @@
       mode="date"
       :masks="masks"
       is-range
-      :timezone="['UTC']"
+      :timezone="'UTC'"
     >
       <template v-slot="{ inputValue, inputEvents, isDragging }">
         <input type="hidden" name="start" :value="inputValue.start">
@@ -34,20 +34,20 @@
 </template>
 
 <script>
-  export default {
-    props: {
-      start: '',
-      end: '',
-    },
-    data() {
-      return {
-        range: { start: null, end: null },
-        masks: { input: 'YYYY-MM-DD' },
-      }
-    },
-    created() {
-      if (this.end) this.range.end = this.end
-      if (this.start) this.range.start = this.start
-    },
-  }
+export default {
+  props: {
+    start: '',
+    end: '',
+  },
+  data() {
+    return {
+      range: { start: null, end: null },
+      masks: { input: 'YYYY-MM-DD' },
+    }
+  },
+  created() {
+    if (this.end) this.range.end = this.end
+    if (this.start) this.range.start = this.start
+  },
+}
 </script>

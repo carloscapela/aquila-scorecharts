@@ -11,6 +11,7 @@
     </template>
     <template #content>
 
+      <!-- SELECT conditions -->
       <div class="row mb-2">
         <div class="col-sm-12 col-md-4 col-lg-4">
 
@@ -43,17 +44,10 @@
 
 
         <div class="col-sm-12 col-md-4 col-lg-4">
-
           <div
             class="card border pointer"
             :class="{'text-primary border-primary': this.input==='devices'}"
-            @click="() => {
-              this.getDevices()
-              this.input = 'devices'
-              this.options = this.devices
-              if (this.device) this.options = [this.devices]
-              this.operator = null
-            }"
+            @click="handleClickDevice"
           >
             <div class="card-body text-center p-2">
               <h5 class="card-title">
@@ -65,7 +59,7 @@
                 v-model="device"
                 :get-option-label="(op) => op.name"
                 class="mt-2"
-                :disabled="(input!=='devices')"
+                :disabled="input!=='devices'"
               ></v-select>
             </div>
           </div>
@@ -99,33 +93,43 @@
         </div>
 
       </div>
+      <!-- END SELECT conditions -->
 
       <div class="card">
         <div class="position-relative" style="overflow: hidden;">
-          <!-- text-truncate  -->
           <Popper
+            v-if="options.length"
+            class="position-absolute"
             v-for="m in options"
-            class="position-absolute translate-middle rounded-pill img shadow  bg-opacity-50 text-center"
+            :hover="true"
             :style="Object.assign({
               left: getPostion(m, field.x) + '%',
               bottom: getPostion(m, field.y)-6 + '%',
               transition: 'all 300ms',
-            }, getDimension(m))"
-            :class="{
-              'bg-success' : this.input==='units',
-              'bg-primary' : this.input==='devices',
-              'bg-secondary' : this.input==='operators',
-            }"
-            :hover="true"
+            })"
           >
-            <small class="badge text-bg-light align-middle ml--5">
-              <span v-if="this.input==='operators'">
-                {{ m.name.split('^')[0] }}
-              </span>
-              <span v-else>
-                {{ m.name.split(' ')[0] }}
-              </span>
-            </small>
+            <div
+              class="position-absolute translate-middle rounded-pill img shadow  bg-opacity-50 text-center  align-middle"
+              :style="Object.assign({
+                left: getPostion(m, field.x) + '%',
+                bottom: getPostion(m, field.y)-6 + '%',
+                transition: 'all 300ms',
+              }, getDimension(m))"
+              :class="{
+                'bg-success' : this.input==='units',
+                'bg-primary' : this.input==='devices',
+                'bg-secondary' : this.input==='operators',
+              }"
+            >
+              <small class="badge text-bg-light ml--5" style="margin-top: 30%">
+                <span v-if="this.input==='operators'">
+                  {{ m.name.split('^')[0] }}
+                </span>
+                <span v-else>
+                  {{ m.name.split(' ')[0] }}
+                </span>
+              </small>
+            </div>
             <template #content>
               <div class="card" style="width: 18rem;">
                 <div class="card-header">
@@ -149,6 +153,7 @@
             </template>
           </Popper>
 
+          <!-- GRIDS -->
           <div
             v-for="r in [10,9,8,7,6,5,4,3,2,1]"
             class="row p-0 m-0"
@@ -201,7 +206,6 @@
   import SidebarComponent from '../../components/scorecharts/mult/Sidebar.vue'
   import LineComponent from '../../components/scorecharts/mult/LineFooter.vue'
   import SelectComponent from '../../components/scorecharts/Select.vue'
-
 
   export default {
     components: {
@@ -264,6 +268,11 @@
       this.fetch()
     },
 
+    updated () {
+      this.getDevices()
+      this.getOperators()
+    },
+
     methods: {
 
       fetch () {
@@ -272,9 +281,14 @@
           start: this.range.start,
           end: this.range.end,
         })
+      },
 
+      handleClickDevice(){
         this.getDevices()
-        this.getOperators()
+        this.input = 'devices'
+        this.options = this.devices
+        if (this.device) this.options = [this.device]
+        this.operator = null
       },
 
       scoreLabel (field) {
@@ -323,12 +337,13 @@
 
         let w = this.getPostion(obj, this.field.x)
         let h = this.getPostion(obj, this.field.y)
+
         let d = 80
 
         if (w && h) {
           w = (w * 80) / 100
           h = (h * 80) / 100
-  
+
           d = (h * w) / w
           if (d <= 40) d = 40;
           if (d >= 80) d = 80;
@@ -410,13 +425,13 @@
   height: 80px;
   padding: 2px;
   position: absolute;
-  border: 1px solid #ccc;
+  /* border: 1px solid #ccc; */
   cursor: pointer;
 }
 
 .img:hover {
   z-index: 99;
-  background-color: #b3e4fc;
+  background-color: #ecb678!important;
 }
 
 </style>
