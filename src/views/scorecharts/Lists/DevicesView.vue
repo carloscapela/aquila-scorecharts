@@ -1,11 +1,10 @@
 <template>
-  <LayoutMain :customer="customer.name">
+  <Spinner v-if="load" />
+
+  <LayoutMain v-else :customer="customer.name">
     <template #header>
-      <Header
-        :customer="customer.name"
-      >
+      <Header :customer="customer.name">
         <DateRanger
-          :handle-submit="handleInit"
           :start="range.start"
           :end="range.end"
         />
@@ -17,7 +16,7 @@
 
         <div class="unit rounded"
           @click="() => this.itemSelect = customer"
-          :class="{ active: itemSelect.name == customer.name }"
+          :class="{ active: itemSelect && itemSelect.name == customer.name }"
         >
         </div>
 
@@ -33,7 +32,7 @@
           <div class="col-sm-12 col-md-12 col-lg-3 mb-3" v-for="m in devices">
             <div
               class="item position-relative shadow"
-              :class="{ active: itemSelect.name == m.name }"
+              :class="{ active: itemSelect && itemSelect.name == m.name }"
               @click="() => this.itemSelect = m"
             >
               <div class="position-absolute top-0 start-50 translate-middle badge rounded-pill badge text-bg-light">
@@ -50,12 +49,12 @@
 
         <div class="card-body p-2" style="z-index: 99; background-color: #FFF;">
           <LineComponent
-            v-if="itemSelect.name === this.customer.name"
+            v-if="itemSelect && itemSelect.name === this.customer.name"
             :field="field"
             :main="itemSelect"
           />
           <LineBarComponent
-            v-if="itemSelect.name !== this.customer.name"
+            v-if="itemSelect && itemSelect.name !== this.customer.name"
             :field="field"
             :main="itemSelect"
           />
@@ -65,7 +64,7 @@
 
     <template #sidebar>
       <SidebarComponent
-        :main="itemSelect"
+        :main="itemSelect ? itemSelect : customer"
         :field="field"
         :callback="(v) => this.field = v"
       >
@@ -76,7 +75,7 @@
             this.itemSelect = v
             this.field = field
           }"
-          :selected="itemSelect"
+          :selected="itemSelect ? itemSelect : customer"
         />
       </SidebarComponent>
     </template>
@@ -94,6 +93,7 @@
   import LineComponent from '../../../components/scorecharts/LineFooter.vue'
   import LineBarComponent from '../../../components/scorecharts/LineBarFooter.vue'
   import SelectComponent from '../../../components/scorecharts/Select.vue'
+  import Spinner from '../../../components/scorecharts/Spinner.vue'
 
   export default {
     components: {
@@ -104,46 +104,55 @@
       DateRanger,
       SelectComponent,
       LineBarComponent,
+      Spinner,
     },
     data() {
       return {
-        itemSelect: {},
+        itemSelect: null,
         field: 'total_exams',
-        range: { start: null, end: null }
+        range: { start: null, end: null },
+        devices: [],
       }
     },
     computed: mapState({
       customer: state => state.customer,
-      devices: state => state.devices,
+      devicesFetch: state => state.devices,
+      load: state => state.dataLoad,
     }),
+
     created() {
-      // this.range.start = moment().subtract(1, 'months').format('YYYY-MM-DD')
-      // this.range.end = moment().format('YYYY-MM-DD')
       this.range = help.queryDate(this.$route.query)
-      this.handleInit(this.range.start, this.range.end)
+      this.fetch()
     },
+
+    updated() {
+      this.handleDevices()
+    },
+
     methods: {
-      handleInit (start='', end='') {
-
-        this.$store.dispatch('fetch', {
+      fetch () {
+        this.$store.dispatch('fetchApi', {
           name: this.$route.params.customer,
-          start,
-          end,
+          start: this.range.start,
+          end: this.range.end,
         })
+      },
 
+      handleDevices() {
         this.$store.dispatch('fetchDevices', {
           name: this.$route.params.customer,
         })
 
-        // Order
-        this.devices.sort((a, b) =>
-          b[`_${help.getKeyScore(a)}`].max - a[`_${help.getKeyScore(a)}`].max
-        )
-
+        this.devices = this.devicesFetch.sort((a, b) =>
+          a[`_${help.getKeyScore(a)}`].avg - b[`_${help.getKeyScore(a)}`].avg
+        ).reverse()
+        // Set itemSelect
         this.itemSelect = this.customer
       },
 
-      symbol () { return help.symbol(this.field) },
+      symbol () {
+        return help.symbol(this.field)
+      },
 
       indicate (item) {
         const f = this.field

@@ -23,7 +23,7 @@
           <router-link
             v-if="customer"
             :to="{ name: 'ListDevices', params: { customer: customer }, query: range}"
-            class="nav-link disabled"
+            class="nav-link"
           >
             <i class="bi bi-house-heart"></i>
             Devices
