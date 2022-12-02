@@ -1,13 +1,13 @@
 <template>
 <div v-if="main">
     <slot></slot>
-    <div class="card mb-2 text-center">
-        <div class="card-header">
-           Name: {{ main.name }}
-        </div>
-        <div class="card-body">
+    <div class="card border mb-2 text-center">
+        <div class="card-body text-center p-2">
+            <h6 class="card-title">
+               {{ main.name }}
+            </h6>
             <button
-                class="btn btn-secondary btn-sm m-1"
+                class="btn btn-primary btn-sm m-1"
                 :class="{ disabled: !titleX }"
                 @click="() => {
                     x = null
@@ -98,7 +98,7 @@ export default {
             }
         },
         getClassActive (key) {
-            if (key===this.x) return { 'text-secondary border border-secondary' : true }
+            if (key===this.x) return { 'text-primary border border-primary' : true }
             if (key===this.y) return { 'text-warning border border-warning' : true }
         },
         totalExams(main){

@@ -1,11 +1,9 @@
 <template>
-  <LayoutMain :customer="customer.name">
+  <Spinner v-if="load" />
+  <LayoutMain v-else :customer="customer.name">
     <template #header>
-      <Header
-        :customer="customer.name"
-      >
+      <Header :customer="customer.name">
         <DateRanger
-          :handle-submit="handleInit"
           :start="range.start"
           :end="range.end"
         />
@@ -16,7 +14,7 @@
       <div class="card position-relative">
         <div class="device rounded"
           @click="() => this.itemSelect = customer"
-          :class="{ active: itemSelect.name == customer.name }"
+          :class="{ active: itemSelect && itemSelect.name == customer.name }"
         >
         </div>
 
@@ -49,12 +47,12 @@
         <div class="card-body p-1" style="z-index: 99; background-color: #FFF;">
           <LineComponent
             :field="field"
-            :main="itemSelect"
+            :main="itemSelect ? itemSelect : customer"
           />
           <QuaLineComponent
-            v-if="(field === 'qual_score') && itemSelect.name !== customer.name"
+            v-if="(field === 'qual_score') && itemSelect && itemSelect.name !== customer.name"
             :field="field"
-            :main="itemSelect"
+            :main="itemSelect ? itemSelect : customer"
           />
         </div>
       </div>
@@ -62,14 +60,14 @@
 
     <template #sidebar>
       <SidebarComponent
-        :main="itemSelect"
+        :main="itemSelect ? itemSelect : customer"
         :field="field"
         :callback="(v) => this.field = v">
         <SelectComponent
           :options="operators"
           :main="customer"
           :callback="(v) => this.itemSelect = v"
-          :selected="itemSelect"
+          :selected="itemSelect ? itemSelect : customer"
         />
       </SidebarComponent>
     </template>
@@ -87,6 +85,7 @@
   import LineComponent from '../../../components/scorecharts/LineFooter.vue'
   import SelectComponent from '../../../components/scorecharts/Select.vue'
   import QuaLineComponent from '../../../components/scorecharts/QuaLineFooter.vue'
+  import Spinner from '../../../components/scorecharts/Spinner.vue'
 
   export default {
     components: {
@@ -97,47 +96,48 @@
       DateRanger,
       SelectComponent,
       QuaLineComponent,
+      Spinner,
     },
     data() {
       return {
         field: 'total_exams',
-        itemSelect: {},
         range: { start: null, end: null },
         options: [],
+        itemSelect: null,
       }
     },
     created() {
       this.range = help.queryDate(this.$route.query)
-      this.handleInit(this.range.start, this.range.end)
+      this.fetch()
+    },
+    updated() {
+      this.handleOperators()
+      this.handleItemSelect()
     },
     computed: mapState({
       customer: state => state.customer,
       operators: state => state.operators,
-      // device: state => state.main,
-      operatorParams () {
-        return {
-          customer: this.itemSelect.customer_name,
-          unitName: this.itemSelect.unit_name,
-          deviceName: this.device.name,
-        }
-      },
+      load: state => state.dataLoad,
       getField () { return `_${this.field}` },
     }),
     methods: {
-      handleInit (start='', end='') {
-        // Main Store
-        this.$store.dispatch('fetch', { name: this.$route.params.customer, start, end })
+      fetch () {
+        this.$store.dispatch('fetchApi', {
+          name: this.$route.params.customer,
+          start: this.range.start,
+          end: this.range.end,
+        })
+      },
 
+      handleItemSelect() {
+        this.operators.sort((a, b) =>  b[this.getField].max-a[this.getField].max)
+        this.itemSelect = this.customer
+      },
+
+      handleOperators(){
         this.$store.dispatch('fetchOperators', {
           name: this.$route.params.customer,
-          start,
-          end,
         })
-
-        // Order
-        this.operators.sort((a, b) =>  b[this.getField].max-a[this.getField].max)
-
-        this.itemSelect = this.customer
       },
 
       symbol () { return help.symbol(this.field) },

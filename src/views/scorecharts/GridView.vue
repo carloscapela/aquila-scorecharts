@@ -1,11 +1,9 @@
 <template>
   <Spinner v-if="load" />
-
   <LayoutMain v-else :customer="customer.name">
     <template #header>
       <Header :customer="customer.name">
         <DateRanger
-          :handle-submit="handleInit"
           :start="range.start"
           :end="range.end"
         />
@@ -16,10 +14,9 @@
       <div class="row mb-2">
         <div class="col-sm-12 col-md-4 col-lg-4">
 
-          <button
-            class="btn w-100"
-            type="button"
-            id="button-addon1"
+          <div
+            class="card border pointer"
+            :class="{ 'text-success border-success':this.input==='units'}"
             @click="() => {
               this.input = 'units'
               this.options = this.units
@@ -27,26 +24,29 @@
               this.device = null
               this.operator = null
             }"
-            :class="[this.input==='units' ? 'btn-secondary' : 'btn-outline-secondary']"
           >
-            Units <span class="badge text-bg-light float-end">{{ this.units.length }}</span>
-          </button>
-          <v-select
-            :options="units"
-            v-model="unit"
-            :get-option-label="(op) => op.name"
-            class="mt-2"
-            :disabled="input!=='units'"
-          ></v-select>
+            <div class="card-body text-center p-2">
+              <h5 class="card-title">
+                Units <span class="badge bg-secondary float-end">{{ this.units.length }}</span>
+              </h5>
+              <v-select
+                :options="units"
+                v-model="unit"
+                :get-option-label="(op) => op.name"
+                class="mt-2"
+                :disabled="(input!=='units')"
+              ></v-select>
+            </div>
+          </div>
         </div>
+
 
 
         <div class="col-sm-12 col-md-4 col-lg-4">
 
-          <button
-            class="btn w-100"
-            type="button"
-            id="button-addon1"
+          <div
+            class="card border pointer"
+            :class="{'text-primary border-primary': this.input==='devices'}"
             @click="() => {
               this.getDevices()
               this.input = 'devices'
@@ -54,43 +54,48 @@
               if (this.device) this.options = [this.devices]
               this.operator = null
             }"
-            :class="[this.input==='devices' ? 'btn-secondary' : 'btn-outline-secondary']"
           >
-            Devices
-            <span class="badge text-bg-light float-end">{{ this.devices.length }}</span>
-          </button>
-          <v-select
-            :options="devices"
-            v-model="device"
-            :get-option-label="(op) => op.name"
-            class="mt-2"
-            :disabled="input!=='devices'"
-          ></v-select>
+            <div class="card-body text-center p-2">
+              <h5 class="card-title">
+                Devices
+                <span class="badge bg-secondary float-end">{{ this.devices.length }}</span>
+              </h5>
+              <v-select
+                :options="devices"
+                v-model="device"
+                :get-option-label="(op) => op.name"
+                class="mt-2"
+                :disabled="(input!=='devices')"
+              ></v-select>
+            </div>
+          </div>
         </div>
 
         <div class="col-sm-12 col-md-4 col-lg-4">
-          <button
-            class="btn w-100"
-            type="button"
-            id="button-addon1"
+          <div
+            class="card border pointer"
+            :class="{'text-secondary border-secondary' : this.input==='operators'}"
             @click="() => {
               this.getOperators()
               this.options = this.operators
               if (this.operator) this.options = [this.operator]
               this.input = 'operators'
             }"
-            :class="[this.input==='operators' ? 'btn-secondary' : 'btn-outline-secondary']"
           >
-            Operators
-            <span class="badge text-bg-light float-end">{{ this.operators.length }}</span>
-          </button>
-          <v-select
-            :options="operators"
-            v-model="operator"
-            :get-option-label="(op) => op.name"
-            class="mt-2"
-            :disabled="input!=='operators'"
-          ></v-select>
+            <div class="card-body text-center p-2">
+              <h5 class="card-title">
+                Operators
+                <span class="badge bg-secondary float-end">{{ this.operators.length }}</span>
+              </h5>
+              <v-select
+                :options="operators"
+                v-model="operator"
+                :get-option-label="(op) => op.name"
+                class="mt-2"
+                :disabled="(input!=='operators')"
+              ></v-select>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -256,16 +261,16 @@
 
     created() {
       this.range = help.queryDate(this.$route.query)
-      this.handleInit(this.range.start, this.range.end)
+      this.fetch()
     },
 
     methods: {
 
-      handleInit (start='', end='') {
+      fetch () {
         this.$store.dispatch('fetchApi', {
           name: this.$route.params.customer,
-          start,
-          end,
+          start: this.range.start,
+          end: this.range.end,
         })
 
         this.getDevices()
@@ -302,7 +307,9 @@
       },
 
       // possition
-      getPostion (obj, field) {
+      getPostion (obj, field=null) {
+        if (!field) return 50
+
         let value = obj[`_${field}`].avg
         let max = obj[`_${field}`].max
 
@@ -318,12 +325,14 @@
         let h = this.getPostion(obj, this.field.y)
         let d = 80
 
-        w = (w * 80) / 100
-        h = (h * 80) / 100
-
-        d = (h * w) / w
-        if (d <= 40) d = 40;
-        if (d >= 80) d = 80;
+        if (w && h) {
+          w = (w * 80) / 100
+          h = (h * 80) / 100
+  
+          d = (h * w) / w
+          if (d <= 40) d = 40;
+          if (d >= 80) d = 80;
+        }
 
         return {
           width: `${d}px`,

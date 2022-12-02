@@ -44,7 +44,10 @@
               v-if="this.indicate(m) > 0"
               class="item position-relative shadow"
               :class="{ active: itemSelect.name == m.name }"
-              @click="() => this.itemSelect = m">
+              @click="() => {
+                this.itemSelect = m
+                this.setSeries(this.field)
+              }">
               <div class="position-absolute top-0 start-50 translate-middle badge rounded-pill badge text-bg-light">
                 {{ m.name }}
               </div>
@@ -142,23 +145,17 @@
         field: 'total_exams',
         range: { start: null, end: null },
         options: [],
+        operators: [],
         itemSelect: null,
         device: null,
       }
     },
     computed: mapState({
       customer: state => state.customer,
-      operators: state => state.operators,
+      operatorsFetch: state => state.operators,
       load: state => state.dataLoad,
       devices: state => state.devices,
       data: state => state.data, // get all operators
-      operatorParams () {
-        return {
-          customer: this.itemSelect.customer_name,
-          unitName: this.itemSelect.unit_name,
-          deviceName: this.device.name,
-        }
-      },
       getField () { return `_${this.field}` },
     }),
     created() {
@@ -179,7 +176,7 @@
           end: this.range.end,
         })
       },
-
+      // 01
       handleDevices () {
         this.$store.dispatch('fetchDevices', {
           name: this.$route.params.customer,
@@ -190,31 +187,34 @@
           b[`_${help.getKeyScore(a)}`].avg - a[`_${help.getKeyScore(a)}`].avg
         )
       },
-
+      // 02
       handleOperators () {
         this.$store.dispatch('fetchOperators', {
           name: this.$route.params.customer,
         })
         // filter to diveceName
-        // this.operators = this.operators.filter(op => op.operator_name === this.$route.params.deviceName)
+        this.operators = this.operatorsFetch.filter(op => op.operator_name.includes(this.$route.params.deviceName))
         // Order
         this.operators.sort((a, b) =>  b[this.getField].max-a[this.getField].max)
       },
-
+      // 03
       handleItemSelect () {
         this.device = this.devices.find(device => device.name === this.$route.params.deviceName)
         this.itemSelect = this.device
       },
 
       setSeries (field) {
-        let keys = []
+        let options = []
         this.field = field
 
         this.itemSelect.operator_name.map((name, i) => {
-          if (name === this.device.name) keys.push(i)
+          if (name === this.$route.params.deviceName) {
+            console.log(this.itemSelect[field][i])
+            options.push(this.itemSelect[field][i])
+          }
         })
 
-        this.options = this.itemSelect[field].filter((value, i) => keys.includes(i)===i)
+        this.options = options
       },
 
       symbol () { return help.symbol(this.field) },

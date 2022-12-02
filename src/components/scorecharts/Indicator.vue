@@ -2,7 +2,7 @@
     <div
         v-if="isValid()"
         class="card shadow-sm border mb-2 pointer"
-        :class="classActive"
+        :class="myClassActive"
     >
         <div class="card-body row m-0 p-2">
             <div class="col-sm-12 col-md-6 col-lg-6">
@@ -47,7 +47,6 @@
 </template>
 
 <script>
-import { isBoolean } from 'lodash'
 import help from '../../scorecharts/helpers'
 export default {
     props: {
@@ -83,7 +82,7 @@ export default {
     },
 
     computed: {
-        classActive () {
+        myClassActive () {
             if (this.classActive) return this.classActive
 
             return this.active ? { 'text-primary border border-primary' : true } : {}
