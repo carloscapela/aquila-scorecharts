@@ -18,7 +18,5 @@
 </script>
 
 <style>
-  body {
-    background-color: #fff;
-  }
+  body { background-color: #fff; }
 </style>

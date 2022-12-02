@@ -1,10 +1,11 @@
 <template>
-  <LayoutMain :customer="customer.name">
+  <Spinner v-if="load"/>
+  <LayoutMain v-else :customer="customer.name">
     <template #header>
       <Header
-        :customer="device.customer_name"
-        :unit="device.unit_name"
-        :device="device.name"
+        :customer="customer.name"
+        :unit="device ? device.unit_name : null"
+        :device="device ? device.name : null"
       >
         <DateRanger
           :handle-submit="handleInit"
@@ -16,13 +17,16 @@
 
     <template #content>
       <div class="card position-relative">
-        <div class="device rounded"
+
+        <div
+          v-if="device"
+          class="device rounded"
           @click="() => this.itemSelect = device"
           :class="{ active: itemSelect.name == device.name }"
         >
         </div>
-
         <div
+          v-if="device"
           class="card-header link-primary pointer mb-4"
           style="z-index: 99;"
           @click="() => this.itemSelect = device"
@@ -70,19 +74,19 @@
         <div class="card-body p-1" style="z-index: 99; background-color: #FFF;">
           <!--Line to  DEVICE-->
           <LineBarComponent
-            v-if="itemSelect.name === device.name"
+            v-if="(itemSelect && itemSelect.name === device.name)"
             :field="field"
             :main="itemSelect"
           />
           <!--Line to OPERATOR-->
           <LineComponent
-            v-if="itemSelect.name !== device.name"
+            v-if="(itemSelect && itemSelect.name !== device.name)"
             :field="field"
             :main="itemSelect"
             :options="options"
           />
           <QuaLineComponent
-            v-if="(field === 'qual_score') && itemSelect.name !== device.name"
+            v-if="(field === 'qual_score') && itemSelect && itemSelect.name !== device.name"
             :field="field"
             :main="itemSelect"
           />
@@ -93,14 +97,14 @@
 
     <template #sidebar>
       <SidebarComponent
-        :main="itemSelect"
+        :main="itemSelect ? itemSelect : device"
         :field="field"
         :callback="(v) => this.setSeries(v)">
         <SelectComponent
           :options="operators"
           :main="device"
           :callback="(v) => this.itemSelect = v"
-          :selected="itemSelect"
+          :selected="itemSelect ? itemSelect : device"
         />
       </SidebarComponent>
     </template>
@@ -118,6 +122,7 @@
   import SelectComponent from '../../components/scorecharts/Select.vue'
   import LineBarComponent from '../../components/scorecharts/LineBarFooter.vue'
   import QuaLineComponent from '../../components/scorecharts/QuaLineFooter.vue'
+  import Spinner from '../../components/scorecharts/Spinner.vue'
   import { mapState } from 'vuex'
 
   export default {
@@ -130,23 +135,23 @@
       SelectComponent,
       LineBarComponent,
       QuaLineComponent,
+      Spinner,
     },
     data() {
       return {
         field: 'total_exams',
-        itemSelect: {},
         range: { start: null, end: null },
         options: [],
+        itemSelect: null,
+        device: null,
       }
-    },
-    created() {
-      this.range = help.queryDate(this.$route.query)
-      this.handleInit(this.range.start, this.range.end)
     },
     computed: mapState({
       customer: state => state.customer,
       operators: state => state.operators,
-      device: state => state.main,
+      load: state => state.dataLoad,
+      devices: state => state.devices,
+      data: state => state.data, // get all operators
       operatorParams () {
         return {
           customer: this.itemSelect.customer_name,
@@ -156,32 +161,48 @@
       },
       getField () { return `_${this.field}` },
     }),
+    created() {
+      this.range = help.queryDate(this.$route.query)
+      this.fetch()
+    },
+    updated () {
+      this.handleDevices()
+      this.handleOperators()
+      this.handleItemSelect()
+    },
     methods: {
-      handleInit (start='', end='') {
+      fetch () {
         // Main Store
-        this.$store.dispatch('fetch', { name: this.$route.params.customer, start, end })
-        this.$store.dispatch('find', { name: this.$route.params.deviceName, type: 'Device:' })
-        var deviceName = this.device.name
-        // Get Operators
-        this.$store.dispatch('fetchOperators', {
+        this.$store.dispatch('fetchApi', {
           name: this.$route.params.customer,
-          start,
-          end,
-          // Filter Complex
-          callback: function (dataJson) {
-            return dataJson.filter(item => {
-              if (item.type==='Operator:') {
-                return item.operator_name === deviceName
-              }
+          start: this.range.start,
+          end: this.range.end,
+        })
+      },
 
-              return item
-            })
-          }
+      handleDevices () {
+        this.$store.dispatch('fetchDevices', {
+          name: this.$route.params.customer,
+          unitName: this.$route.params.unitName,
         })
 
+        this.devices.sort((a, b) =>
+          b[`_${help.getKeyScore(a)}`].avg - a[`_${help.getKeyScore(a)}`].avg
+        )
+      },
+
+      handleOperators () {
+        this.$store.dispatch('fetchOperators', {
+          name: this.$route.params.customer,
+        })
+        // filter to diveceName
+        // this.operators = this.operators.filter(op => op.operator_name === this.$route.params.deviceName)
         // Order
         this.operators.sort((a, b) =>  b[this.getField].max-a[this.getField].max)
+      },
 
+      handleItemSelect () {
+        this.device = this.devices.find(device => device.name === this.$route.params.deviceName)
         this.itemSelect = this.device
       },
 

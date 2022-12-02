@@ -2,7 +2,7 @@ import { createStore } from 'vuex'
 import help from '../helpers'
 import axios from 'axios'
 // TEMP
-import db from '../db'
+// import db from '../db'
 
 export default createStore({
     state: {
@@ -44,32 +44,12 @@ export default createStore({
                 } else {
                     commit('SET_DATA', [])
                 }
-            
+
                 commit('SET_DATA_LOAD', false)
         },
 
-        // not async
-        // payload: {
-        //     name: Number | String,
-        //     start: String,
-        //     end: String,
-        // }
-        fetch({ commit, dispatch }, { name, start, end }) {
-            try {
-                
-                const customerId = Number(name)
-
-                const resp = db.toObj(customerId, start, end)
-
-                commit('SET_DATA', resp)
-
-                dispatch('fetchCustomer', customerId)
-                dispatch('fetchUnits', customerId)
-            }
-            catch (error) { console.log(error) }
-        },
-
-        fetchCustomer({ commit }, name) {
+        // @param name customer_name
+        async fetchCustomer({ commit }, name) {
             const data = this.state.data
 
             const resp = data.find(item =>
@@ -79,7 +59,7 @@ export default createStore({
             commit('SET_CUSTOMER', resp)
         },
 
-        fetchUnits({ commit }, name) {
+        async fetchUnits({ commit }, name) {
             const data = this.state.data
 
             const resp = data.filter(item =>
@@ -93,7 +73,7 @@ export default createStore({
         //     name: Number || String, # customer_name
         //     unitName: String,
         // }
-        fetchDevices({ commit }, payload) {
+        async fetchDevices({ commit }, payload) {
             const data = this.state.data
 
             const resp = data.filter(item => {
@@ -116,14 +96,14 @@ export default createStore({
         //     end: String,
         //     callback: Function
         // }
-        fetchOperators({ commit }, { name, start, end, callback }) {
-            const customerId = Number(name)
+        async fetchOperators({ commit }, payload) {
+            const data = this.state.data
 
-            const data = db.toObj(customerId, start, end, (callback ? callback : null))
-
-            const resp = data.filter(item =>
-                item.type === 'Operator:' && Number(item.customer_name) === customerId
-            )
+            const resp = data.filter(item => {
+                if (item.type === 'Operator:' && Number(item.customer_name) === Number(payload.name)) {
+                    return item
+                }
+            })
 
             commit('SET_OPERATORS', resp)
         },
@@ -132,11 +112,11 @@ export default createStore({
         //     name: Number || String,
         //     type: String,
         // }
-        find({ commit }, { name, type }) {
+        async find({ commit }, { name, type }) {
             const data = this.state.data
 
             const resp = data.find(item => item.type == type && item.name == name)
-            
+
             commit('SET_MAIN', resp)
         }
     },

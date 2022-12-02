@@ -36,7 +36,6 @@
 <script>
   export default {
     props: {
-      handleSubmit: Function,
       start: '',
       end: '',
     },
@@ -49,12 +48,6 @@
     created() {
       if (this.end) this.range.end = this.end
       if (this.start) this.range.start = this.start
-    },
-    methods: {
-      // handle() {
-      //   this.handleSubmit(this.range.start, this.range.end)
-      // },
-      clear () { this.handleSubmit() }
     },
   }
 </script>

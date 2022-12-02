@@ -1,12 +1,13 @@
 <template>
-  <LayoutMain :customer="customer.name">
+  <Spinner v-if="load" />
+  <LayoutMain v-else :customer="customer.name">
     <template #header>
       <Header
-        :customer="itemSelect.customer_name"
-        :unit="itemSelect.unit_name"
+        :customer="customer.name"
+        :unit="unit ? unit.name : null"
       >
+      <!--  -->
         <DateRanger
-          :handle-submit="handleInit"
           :start="range.start"
           :end="range.end"
         />
@@ -16,17 +17,20 @@
     <template #content>
       <div class="card position-relative">
 
-        <div class="unit rounded"
+        <div
+          class="unit rounded"
+          v-if="unit"
           @click="() => this.itemSelect = unit"
           :class="{ active: itemSelect.name == unit.name }"
         ></div>
 
         <div
+          v-if="unit"
           class="card-header link-primary pointer mb-4"
           style="z-index: 99;"
-          @click="() => this.itemSelect = unit"
+          @click="() => this.itemSelect.name = unit.name"
         >
-          Unit: {{ itemSelect.unit_name }}
+          Unit: {{ unit.name }}
         </div>
 
         <div class="row text-center justify-content-md-center">
@@ -53,14 +57,14 @@
 
         <div class="card-body p-2" style="z-index: 99; background-color: #FFF;">
           <LineComponent
-            v-if="itemSelect.name === this.unit.name"
+            v-if="(itemSelect && itemSelect.name === unit.name)"
             :field="field"
-            :main="itemSelect"
+            :main="itemSelect ? itemSelect : unit"
           />
           <LineBarComponent
-            v-if="itemSelect.name !== this.unit.name"
+            v-if="(itemSelect && itemSelect.name !== unit.name)"
             :field="field"
-            :main="itemSelect"
+            :main="itemSelect ? itemSelect : unit"
           />
         </div>
       </div>
@@ -68,7 +72,7 @@
 
     <template #sidebar>
       <SidebarComponent
-        :main="itemSelect"
+        :main="itemSelect ? itemSelect : unit"
         :field="field"
         :callback="(v) => this.field = v"
       >
@@ -79,7 +83,7 @@
             this.itemSelect = v
             this.field = field
           }"
-          :selected="itemSelect"
+          :selected="itemSelect ? itemSelect : unit"
         />
       </SidebarComponent>
     </template>
@@ -96,6 +100,7 @@
   import LineComponent from '../../components/scorecharts/LineFooter.vue'
   import LineBarComponent from '../../components/scorecharts/LineBarFooter.vue'
   import SelectComponent from '../../components/scorecharts/Select.vue'
+  import Spinner from '../../components/scorecharts/Spinner.vue'
   import { mapState } from 'vuex'
 
   export default {
@@ -107,45 +112,53 @@
       DateRanger,
       SelectComponent,
       LineBarComponent,
+      Spinner,
     },
     data() {
       return {
-        itemSelect: {},
         field: 'total_exams',
         range: { start: null, end: null },
-        load: '',
+        itemSelect: null,
+        unit: null,
       }
     },
     computed: mapState({
       customer: state => state.customer,
       devices: state => state.devices,
-      unit: state => state.main,
+      units: state => state.units,
+      load: state => state.dataLoad,
     }),
     created() {
       this.range = help.queryDate(this.$route.query)
-      this.handleInit(this.range.start, this.range.end)
+      this.fetch()
+    },
+    updated () {
+      this.handleItemSelect()
+      this.handleDevices()
     },
     methods: {
-      handleInit (start='', end='') {
-        this.$store.dispatch('fetch', {
+      fetch () {
+        this.$store.dispatch('fetchApi', {
           name: this.$route.params.customer,
-          start,
-          end,
+          start: this.range.start,
+          end: this.range.end,
         })
+      },
+
+      handleItemSelect () {
+        this.unit = this.units.find(unit => unit.name === this.$route.params.unitName)
+        this.itemSelect = this.unit
+      },
+
+      handleDevices () {
         this.$store.dispatch('fetchDevices', {
           name: this.$route.params.customer,
           unitName: this.$route.params.unitName,
         })
-        this.$store.dispatch('find', {name: this.$route.params.unitName, type: 'Unit:' })
 
-        // Order
         this.devices.sort((a, b) =>
           b[`_${help.getKeyScore(a)}`].avg - a[`_${help.getKeyScore(a)}`].avg
         )
-        // this.itemSelect = this.itemSelect.name ? this.itemSelect : this.unit
-        this.itemSelect = this.unit
-        this.load = help.random()
-        // console.log(this.load)
       },
 
       operatorParams (deviceName = '') {

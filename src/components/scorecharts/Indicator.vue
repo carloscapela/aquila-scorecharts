@@ -1,5 +1,9 @@
 <template>
-    <div v-if="isValid()" class="card shadow-sm border mb-2 pointer" :class="{ 'text-primary border border-primary' : active }">
+    <div
+        v-if="isValid()"
+        class="card shadow-sm border mb-2 pointer"
+        :class="classActive"
+    >
         <div class="card-body row m-0 p-2">
             <div class="col-sm-12 col-md-6 col-lg-6">
                 <div class="stretched-link" @click="callback()">
@@ -43,6 +47,7 @@
 </template>
 
 <script>
+import { isBoolean } from 'lodash'
 import help from '../../scorecharts/helpers'
 export default {
     props: {
@@ -62,6 +67,10 @@ export default {
             required: false,
             default: false,
         },
+        classActive: {
+            type: Object,
+            require: false,
+        },
         value: 0,
         valueMin: 0,
         valueMax: 0,
@@ -72,5 +81,13 @@ export default {
 
         symbol (key) { return help.symbol(key) },
     },
+
+    computed: {
+        classActive () {
+            if (this.classActive) return this.classActive
+
+            return this.active ? { 'text-primary border border-primary' : true } : {}
+        },
+    }
 }
 </script>

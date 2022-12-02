@@ -6,7 +6,7 @@
                 class="btn btn-link"
                 @click="handleClick">
                 {{ prefix }}
-                {{ main.name }}
+                {{ main ? main.name : '' }}
             </button>
         </div>
         <div class="card-body p-2">

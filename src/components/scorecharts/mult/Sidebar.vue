@@ -35,20 +35,22 @@
         </div>
     </div>
 
+    <!-- :active="getClassActive('total_exams')" -->
     <IndicatorComponent
         title="Production"
         :options="main._total_exams"
         :callback="() => this.handleClick('total_exams')"
-        :active="getClassActive('total_exams')"
+        :classActive="getClassActive('total_exams')"
         :value="this.totalExams(main)"
         field="total_exams"
     />
+    <!-- :active="getClassActive(scoreKey)" -->
     <IndicatorComponent
         v-for="(label, scoreKey) in scores"
         :title="label"
         :options="main[`_${scoreKey}`]"
         :callback="() => this.handleClick(scoreKey)"
-        :active="getClassActive(scoreKey)"
+        :classActive="getClassActive(scoreKey)"
         :field="scoreKey"
         :value="scoreKey==='safety_score' ? main[`_${scoreKey}`].max : main[`_${scoreKey}`].avg"
     />
@@ -96,7 +98,8 @@ export default {
             }
         },
         getClassActive (key) {
-            return (key===this.y || key===this.x) ? true : false
+            if (key===this.x) return { 'text-secondary border border-secondary' : true }
+            if (key===this.y) return { 'text-warning border border-warning' : true }
         },
         totalExams(main){
             return help.totalExams(main)

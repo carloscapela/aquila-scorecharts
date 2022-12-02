@@ -289,8 +289,6 @@
       getOperators() {
         this.$store.dispatch('fetchOperators', {
           name: this.$route.params.customer,
-          start: this.range.start,
-          end: this.range.end,
         })
       },
 

@@ -1,10 +1,10 @@
 <template>
-  <LayoutMain :customer="customer.name">
+  <Spinner v-if="load" />
+  <LayoutMain v-else :customer="customer.name">
 
     <template #header>
       <Header :customer="customer.name">
         <DateRanger
-          :handle-submit="handleInit"
           :start="range.start"
           :end="range.end"
         />
@@ -17,7 +17,7 @@
         <div class="card-body p-1">
           <LineFooterComponent
             :field="field"
-            :main="itemSelect"
+            :main="itemSelect ? itemSelect : customer"
           />
         </div>
       </div>
@@ -25,7 +25,7 @@
 
     <template #sidebar>
       <SidebarComponent
-        :main="itemSelect"
+        :main="itemSelect ? itemSelect : customer"
         :field="field"
         :callback="(v) => {
           this.field = v
@@ -38,10 +38,11 @@
             this.itemSelect = v
             this.initMap()
           }"
-          :selected="itemSelect"
+          :selected="itemSelect ? itemSelect : customer"
           prefix="Customer-"
         />
       </SidebarComponent>
+      <!-- {{ units }} -->
     </template>
   </LayoutMain>
 </template>
@@ -54,6 +55,7 @@ import Header from '../../components/scorecharts/Header.vue'
 import SidebarComponent from '../../components/scorecharts/Sidebar.vue'
 import LineFooterComponent from '../../components/scorecharts/LineFooter.vue'
 import SelectComponent from '../../components/scorecharts/Select.vue'
+import Spinner from '../../components/scorecharts/Spinner.vue'
 import { mapState } from 'vuex'
 
 export default {
@@ -64,10 +66,11 @@ export default {
     Header,
     DateRanger,
     SelectComponent,
+    Spinner,
   },
   data() {
     return {
-      itemSelect: {},
+      itemSelect: null,
       mapOptions: {},
       field: 'total_exams',
       range: { start: null, end: null }
@@ -77,6 +80,7 @@ export default {
   computed: mapState({
     customer: state => state.customer,
     units: state => state.units,
+    load: state => state.dataLoad,
   }),
 
   created() {
@@ -84,22 +88,25 @@ export default {
     this.handleInit(this.range.start, this.range.end)
   },
 
+
+  updated(){
+    this.initMap()
+  },
+
   methods: {
-    handleInit (start='', end='') {
-      this.$store.dispatch('fetch', {
+    async handleInit (start='', end='') {
+      this.$store.dispatch('fetchApi', {
         name: this.$route.params.customer,
         start,
         end,
       })
+
       if (!this.customer || !this.$route.params.customer) window.location.href = '/'
 
-      this.itemSelect = this.customer
       // Filter with param UNITNAME
       if (this.$route.params.unitName) {
         this.itemSelect = this.units.find(item => item.name == this.$route.params.unitName)
       }
-      this.initMap()
-      this.setUnitMap()
     },
 
     setUnitMap () {
@@ -137,6 +144,8 @@ export default {
     },
 
     initMap () {
+      this.setUnitMap()
+
       const loader = help.load()
       // const tests = []
       loader.loadCallback(e => {
@@ -193,10 +202,12 @@ export default {
 
             let colorSelect = '#174664'
             // Selected ITEM
-            if (this.itemSelect.name == unit.name) {
-              colorSelect = '#ff0000'
-              infoWindow.setPosition(position)
-              infoWindow.open(map)
+            if (this.itemSelect) {
+              if (this.itemSelect.name == unit.name) {
+                colorSelect = '#ff0000'
+                infoWindow.setPosition(position)
+                infoWindow.open(map)
+              }
             }
 
             // Add the circle for this city to the map.
