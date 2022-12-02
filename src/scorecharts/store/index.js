@@ -1,8 +1,6 @@
 import { createStore } from 'vuex'
 import help from '../helpers'
 import axios from 'axios'
-// TEMP
-// import db from '../db'
 
 export default createStore({
     state: {
