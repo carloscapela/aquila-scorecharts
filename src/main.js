@@ -15,7 +15,6 @@ import 'v-calendar/dist/style.css'
 import 'animate.css'
 import 'vue-select/dist/vue-select.css'
 import '@/assets/main.css'
-import 'floating-vue/dist/style.css'
 
 const app = createApp(App)
 
