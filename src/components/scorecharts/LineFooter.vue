@@ -20,6 +20,11 @@ export default {
             required: false,
             default: [],
         },
+        newDates: {
+            type: Array,
+            required: false,
+            default: [],
+        }
     },
     data() {
         return {
@@ -56,7 +61,10 @@ export default {
         // convert date & time
         formatDate() {
             const dt = []
-            if (this.main) {
+            if (this.newDates.length) {
+                this.newDates.map(d => dt.push(h.dateFormat(d)))
+            }
+            if (this.main && !this.dates.length) {
                 this.main.study_date.map(d => dt.push(h.dateFormat(d)))
             }
             this.dates = dt
@@ -121,6 +129,12 @@ export default {
     watch: {
         field(newValue, oldValue) {
             if (newValue !== oldValue) {
+                this.formatDate()
+                this.handleInit()
+            }
+        },
+        options(newValue, oldValue) {
+            if (newValue.length !== oldValue.length) {
                 this.formatDate()
                 this.handleInit()
             }

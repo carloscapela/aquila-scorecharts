@@ -6,7 +6,6 @@
         :customer="customer.name"
         :unit="unit ? unit.name : null"
       >
-      <!--  -->
         <DateRanger
           :start="range.start"
           :end="range.end"
@@ -37,7 +36,7 @@
           <div class="col-sm-12 col-md-12 col-lg-3 mb-3" v-for="m in devices">
             <div
               class="item position-relative shadow"
-              :class="{ active: itemSelect.name == m.name }"
+              :class="{ active: itemSelect && itemSelect.name == m.name }"
               @click="() => this.itemSelect = m">
               <div class="position-absolute top-0 start-50 translate-middle badge rounded-pill badge text-bg-light">
                 Device: {{ m.name }}
@@ -48,7 +47,7 @@
               </h2>
               <img src="@/assets/mammography.png" alt="Devices" width="110" />
               <br>
-              <router-link :to="{ name: 'operators', params: operatorParams(m.name), query: this.range }">
+              <router-link :to="{ name: 'operators', params: operatorParams(m.unit_name, m.name), query: range}">
                 Operators
               </router-link>
             </div>
@@ -161,10 +160,10 @@
         )
       },
 
-      operatorParams (deviceName = '') {
+      operatorParams (unitName, deviceName = '') {
         return {
-          customer: this.itemSelect.customer_name,
-          unitName: this.itemSelect.unit_name,
+          customer: this.customer.name,
+          unitName: unitName,
           deviceName: deviceName,
         }
       },

@@ -31,7 +31,7 @@ export default createStore({
                 const customerId = Number(name)
 
                 const response = await axios.get(
-                    `https://scorechat-aquila.herokuapp.com/api/${customerId}`,
+                    `https://apiscoreaquila.herokuapp.com/api/${customerId}`,
                     { params: { start, end } }
                 )
                 const resp = help.toObj(response.data)

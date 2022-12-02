@@ -8,7 +8,6 @@
         :device="device ? device.name : null"
       >
         <DateRanger
-          :handle-submit="handleInit"
           :start="range.start"
           :end="range.end"
         />
@@ -21,7 +20,10 @@
         <div
           v-if="device"
           class="device rounded"
-          @click="() => this.itemSelect = device"
+          @click="() => {
+            this.itemSelect = device
+            this.type = 'device'
+          }"
           :class="{ active: itemSelect.name == device.name }"
         >
         </div>
@@ -29,7 +31,10 @@
           v-if="device"
           class="card-header link-primary pointer mb-4"
           style="z-index: 99;"
-          @click="() => this.itemSelect = device"
+          @click="() => {
+            this.itemSelect = device
+            this.type = 'device'
+          }"
         >
           Device: {{ device.name }}
         </div>
@@ -46,6 +51,7 @@
               :class="{ active: itemSelect.name == m.name }"
               @click="() => {
                 this.itemSelect = m
+                this.type = 'operator'
                 this.setSeries(this.field)
               }">
               <div class="position-absolute top-0 start-50 translate-middle badge rounded-pill badge text-bg-light">
@@ -75,21 +81,23 @@
         </div>
 
         <div class="card-body p-1" style="z-index: 99; background-color: #FFF;">
-          <!--Line to  DEVICE-->
+          <!-- DEVICE -->
           <LineBarComponent
             v-if="(itemSelect && itemSelect.name === device.name)"
             :field="field"
             :main="itemSelect"
           />
-          <!--Line to OPERATOR-->
+          <!-- OPERATOR -->
           <LineComponent
-            v-if="(itemSelect && itemSelect.name !== device.name)"
+            v-if="type==='operator'"
             :field="field"
             :main="itemSelect"
             :options="options"
+            :new-dates="dates"
           />
+          <!-- v-if="(field === 'qual_score') && itemSelect && itemSelect.name !== device.name" -->
           <QuaLineComponent
-            v-if="(field === 'qual_score') && itemSelect && itemSelect.name !== device.name"
+            v-if="(field === 'qual_score' && type==='operator')"
             :field="field"
             :main="itemSelect"
           />
@@ -145,7 +153,9 @@
         field: 'total_exams',
         range: { start: null, end: null },
         options: [],
+        dates: [],
         operators: [],
+        type: 'divece',
         itemSelect: null,
         device: null,
       }
@@ -195,7 +205,7 @@
         // filter to diveceName
         this.operators = this.operatorsFetch.filter(op => op.operator_name.includes(this.$route.params.deviceName))
         // Order
-        this.operators.sort((a, b) =>  b[this.getField].max-a[this.getField].max)
+        this.operators = this.operators.sort((a, b) =>  a[this.getField].avg-b[this.getField].avg).reverse()
       },
       // 03
       handleItemSelect () {
@@ -204,20 +214,24 @@
       },
 
       setSeries (field) {
+        let dates = []
         let options = []
         this.field = field
 
         this.itemSelect.operator_name.map((name, i) => {
           if (name === this.$route.params.deviceName) {
-            console.log(this.itemSelect[field][i])
+            dates.push(this.itemSelect.study_date[i])
             options.push(this.itemSelect[field][i])
           }
         })
 
         this.options = options
+        this.dates = dates
       },
 
-      symbol () { return help.symbol(this.field) },
+      symbol () {
+        return help.symbol(this.field)
+      },
 
       indicate (item) {
 
